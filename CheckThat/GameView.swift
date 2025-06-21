@@ -14,13 +14,48 @@ struct MoveView: View {
     var body: some View {
         VStack(spacing: 20) {
             
-            // Coup actuellement joué
-            Text(game_controller.actual_move)
-                .font(Font.system(size: 50))
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.green.opacity(0.3))
-                )
+            // Coup actuellement joué & Delete button
+            HStack(spacing: 15) {
+                Text(game_controller.actual_move)
+                    .font(Font.system(size: 50))
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.green.opacity(0.3))
+                    ).clipShape(Capsule())
+                Button (action: {
+                    game_controller.delete_last()
+                }) {
+                    Text("DELETE")
+                        .font(Font.system(size: 30))
+                        .background(Color.red)
+                }.clipShape(Capsule())
+
+            }
+        
+            // Grille des colonnes / pions
+            HStack(spacing: 1) {
+                ForEach(moves.letters, id: \.self) { thatchar in
+                    Button(action: {
+                        game_controller.add_character(thatchar)
+                    }) {
+                        Text(thatchar)
+                            .cornerRadius(8)
+                    }
+                    .buttonStyle(thatStyle())
+                }
+            }
+                        
+            // Grilles des nombres / rank
+            HStack(spacing: 1) {
+                ForEach(moves.numbers, id: \.self) { thatchar in
+                    Button(action: {
+                        game_controller.add_character(thatchar)
+                    }) {
+                        Text(thatchar)
+                            .cornerRadius(8)
+                    }.buttonStyle(thatStyle())
+                }
+            }
             
             // Grille des pièces majeurs
             HStack {
@@ -29,34 +64,8 @@ struct MoveView: View {
                         game_controller.add_character(thatchar)
                     }) {
                         Text(thatchar)
-                            .padding(10)
-                    }.buttonStyle(letterStyle())
-                }
-            }
-
-            // Grille des colonnes / pions
-            HStack {
-                ForEach(moves.letters, id: \.self) { thatchar in
-                    Button(action: {
-                        game_controller.add_character(thatchar)
-                    }) {
-                        Text(thatchar)
                             .cornerRadius(8)
-                    }
-                    .buttonStyle(letterStyle())
-                }
-            }
-            
-            // Grilles des nombres / rank
-            HStack {
-                ForEach(moves.numbers, id: \.self) { thatchar in
-                    Button(action: {
-                        game_controller.add_character(thatchar)
-                    }) {
-                        Text(thatchar)
-                            .font(Font.system(size: 15))
-                            .cornerRadius(8)
-                    }.buttonStyle(numberStyle())
+                    }.buttonStyle(thatStyle())
                 }
             }
             
@@ -75,26 +84,29 @@ struct MoveView: View {
 
             // Bouton valider
             Button(action: {
-                game_controller.save_move(move: Move(move_date: Date(), move: game_controller.actual_move))
+                game_controller.isPairComplete ? game_controller.save_move(move: Move(move_date: Date(), move: game_controller.actual_move)) : game_controller.save_pair(withMoveSaved: game_controller.coup_saved, andMove: Move(move_date: Date(), move: game_controller.actual_move))
             }) {
-                Text("Valider le coup")
+                Text(game_controller.isPairComplete ? "Valider le coup" : "Valider la paire")
                     .fontWeight(.bold)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.green)
+                    .background(game_controller.isPairComplete ? Color.blue : Color.green)
                     .foregroundColor(.white)
                     .cornerRadius(10)
             }
             .padding(.top)
 
             // Dernier coup
-            Text("Dernier coup : \(game_controller.game.moves.last?.move ?? "N/A")")
+            Text("Dernier coup : \(game_controller.game.moves.last?.move_one.move ?? "N/A") : \((game_controller.game.moves.last?.move_two.move) ?? "N/A")")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .padding(.top)
             List {
                 ForEach(game_controller.game.moves) { move in
-                    Text(move.move)
+                    HStack {
+                        Text("\(move.move_one.move) : \(move.move_two.move)")
+                        
+                    }
                 }
             }
         }
