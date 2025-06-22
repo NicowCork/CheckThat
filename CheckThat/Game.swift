@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import SwiftUI
-
 
 struct Game: Identifiable {
     let id = UUID()
@@ -30,6 +28,8 @@ struct Move: Identifiable {
 struct MovesData {
     let letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
     let numbers = ["1", "2", "3", "4", "5", "6", "7", "8"]
-    let pieces_letters = ["R", "N", "B", "K", "Q"]
-    let actions = ["O-O", "x","O-O-O"]
+    let pieces_letters = ["R", "N", "B", "Q", "K"]
+    let take = ["TAKE"]
+    let rocks = ["O-O-O", "O-O"]
+    let check = ["CHECK"]
 }
