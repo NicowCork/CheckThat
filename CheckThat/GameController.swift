@@ -23,94 +23,104 @@ class GameController: ObservableObject {
     @Published var game: Game
     @Published var isPairComplete: Bool
     @Published var coup_saved: Move = Move(move_date: Date(), move: "")
-    @Published var move_validation: ButtonsControllerState = .start_default
+    @Published var move_validation: ButtonsControllerState = .only_file_and_pieces_allowed
     
     func ControlButtons(forInput input: String) {
         if input.matches(movesRegexes.start_default.rawValue) {
             print("...")
-            move_validation = .start_default
+            move_validation = .only_file_and_pieces_allowed
             return
         }
         if input.matches(movesRegexes.pawn.rawValue) {
             print("only file")
-            move_validation = .pawn
+            move_validation = .only_rank_allowed
             return
         }
         if input.matches(movesRegexes.pawn_rank.rawValue) {
             print("pawn rank ")
-            move_validation = .pawn_rank
+            move_validation = .only_take_allowed //valid
+            return
+        }
+        if input.matches(movesRegexes.pawn_taking.rawValue) {
+            print("pawn taking")
+            move_validation = .only_file_and_pieces_allowed
             return
         }
         if input.matches(movesRegexes.pawn_taking_file.rawValue) {
             print("pawn taking")
-            move_validation = .pawn_taking_file
+            move_validation = .only_rank_allowed
             return
         }
         if input.matches(movesRegexes.pawn_taking_file_rank.rawValue) {
             print("pawn taking file")
-            move_validation = .pawn_taking_file_rank
+            move_validation = .only_check_allowed //valid
             return
         }
-        if input.matches(movesRegexes.pawn_promotion.rawValue) {
-            print("pawn promotion")
-            move_validation = .pawn_promotion
-            return
-        }
-        if input.matches(movesRegexes.pawn_promotion_check.rawValue) {
-            print("pawn promotion check")
-            move_validation = .pawn_promotion_check
-            return
-        }
+//        if input.matches(movesRegexes.pawn_promotion.rawValue) {
+//            print("pawn promotion")
+//            move_validation = .pawn_promotion
+//            return
+//        }
+//        if input.matches(movesRegexes.pawn_promotion_check.rawValue) {
+//            print("pawn promotion check")
+//            move_validation = .pawn_promotion_check
+//            return
+//        }
         if input.matches(movesRegexes.piece.rawValue) {
             print("piece")
-            move_validation = .piece
+            move_validation = .only_file_and_pieces_allowed
             return
         }
         if input.matches(movesRegexes.piece_file.rawValue) {
             print("piece file")
-            move_validation = .piece_file
+            move_validation = .only_rank_allowed
             return
         }
         if input.matches(movesRegexes.piece_file_rank.rawValue) {
             print("piece file rank")
-            move_validation = .piece_file_rank
+            move_validation = .only_check_allowed //valid
             return
         }
-        if input.matches(movesRegexes.piece_moving.rawValue) {
-            print("piece moving")
-            move_validation = .piece_moving
+        if input.matches(movesRegexes.piece_moving_file.rawValue) {
+            print("piece moving file")
+            move_validation = .only_rank_allowed
+            return
+        }
+        if input.matches(movesRegexes.piece_moving_file_rank.rawValue) {
+            print("piece moving file rank")
+            move_validation = .only_check_allowed // valid
             return
         }
         if input.matches(movesRegexes.piece_taking.rawValue) {
             print("piece taking")
-            move_validation = .piece_taking
+            move_validation = .only_file_and_pieces_allowed
             return
         }
         if input.matches(movesRegexes.piece_taking_file.rawValue) {
             print("piece taking file")
-            move_validation = .piece_taking_file
+            move_validation = .only_rank_allowed
             return
         }
         if input.matches(movesRegexes.piece_taking_file_rank.rawValue) {
             print("piece taking file rank")
-            move_validation = .piece_taking_file_rank
+            move_validation = .only_check_allowed //valid
             return
         }
         if input.matches(movesRegexes.piece_taking_check.rawValue) {
             print("piece taking check")
-            move_validation = .piece_taking_check
+            move_validation = .nothing_allowed //valid
             return
         }
         if input.matches(movesRegexes.all_rocks.rawValue) {
             print("All rocks")
-            move_validation = .all_rocks
+            move_validation = .only_check_allowed // valid
             return
         }
-        if input.matches(movesRegexes.full_move.rawValue) {
-            print("full move")
-            move_validation = .full_move
-            return
-        }
+//        if input.matches(movesRegexes.full_move.rawValue) {
+//            print("full move")
+//            move_validation = .full_move
+//            return
+//        }
     }
         
     func add_character(_ character: String) {

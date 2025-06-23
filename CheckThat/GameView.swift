@@ -19,13 +19,12 @@ struct MoveView: View {
             HStack(spacing: 15) {
                 HStack {
                     RoundedRectangle(cornerRadius: 0)
-                        .background(Color.purple)
                         .frame(width: 25, height: 25)
                         .overlay {
                             RoundedRectangle(cornerRadius: 50, style: .continuous).fill(Color.black)
                         }
+                        
                     RoundedRectangle(cornerRadius: 0)
-                        .background(Color.purple)
                         .frame(width: 25, height: 25)
                         .overlay {
                             RoundedRectangle(cornerRadius: 50, style: .continuous).fill(Color.white)
@@ -37,18 +36,18 @@ struct MoveView: View {
                 HStack {
                     Text("Move:")
                         .font(Font.system(size: 30))
-                        .background(Color.orange)
+                        .background(Color.mint)
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                     Text(game_controller.actual_move)
                         .font(Font.system(size: 30))
-                        .background(Color.orange)
+                        .background(Color.mint)
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                     
                 }.overlay {
                     RoundedRectangle(cornerRadius: 5, style: .continuous)
-                        .strokeBorder(Color.purple, lineWidth: 1)
+                        .strokeBorder(Color.mint, lineWidth: 1)
                 }
-                .background(Color.orange)
+
                     
                 
                 Spacer()
@@ -56,15 +55,10 @@ struct MoveView: View {
                 Button (action: {
                     game_controller.remove_last()
                 }) {
-                    Text("␡")
+                    Text("DEL")
                         .font(Font.system(size: 30))
-                        .background(Color.orange)
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 5))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 5, style: .continuous)
-                        .strokeBorder(Color.purple, lineWidth: 1)
-                }
+                        .foregroundStyle(Color.orange)
+                }.buttonStyle(actionStyle(color: Color.mint))
                 
             }
             
@@ -77,7 +71,7 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(thatStyle(color: Color.blue))
+                    .buttonStyle(thatStyle(color: game_controller.move_validation == .only_file_and_pieces_allowed || game_controller.move_validation == .rank_and_file_allowed || game_controller.move_validation == .only_file_and_pieces_allowed ? Color.blue : Color.gray))
                 }
             }
             
@@ -90,10 +84,10 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(thatStyle(color: Color.blue))
+                    .buttonStyle(thatStyle(color: game_controller.move_validation == .rank_and_file_allowed || game_controller.move_validation == .only_rank_allowed ? Color.blue : Color.gray))
                 }
             }
-            .disabled(game_controller.move_validation == .start_default ? true : false)
+            
             
             
             // Grille des pièces majeurs
@@ -105,7 +99,7 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(thatStyle(color: Color.blue))
+                    .buttonStyle(thatStyle(color: game_controller.move_validation == .only_file_and_pieces_allowed ? Color.blue : Color.gray))
                 }
             }
             Divider()
@@ -118,7 +112,7 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(actionStyle(color: Color.indigo))
+                    .buttonStyle(actionStyle(color: Color.blue))
                     
                 }
                 
@@ -130,7 +124,7 @@ struct MoveView: View {
                             Text(thatchar)
                                 .cornerRadius(8)
                         }
-                        .buttonStyle(actionStyle(color: Color.indigo))
+                        .buttonStyle(actionStyle(color: Color.blue))
                     }
                 }
                 
@@ -141,7 +135,7 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(actionStyle(color: Color.indigo))
+                    .buttonStyle(actionStyle(color: Color.blue))
                 }
             }
             Divider()
