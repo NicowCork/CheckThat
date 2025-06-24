@@ -11,6 +11,7 @@ struct Game: Identifiable {
     let id = UUID()
     let game_date = Date()
     var moves: [PairMove] = []
+    var id_ : Int = 0 
 }
 
 struct PairMove: Identifiable {
