@@ -17,14 +17,14 @@ struct MoveView: View {
             // Coup actuellement joué & Delete button
             HStack(spacing: 15) {
                 Text(game_controller.actual_move)
-                    .font(Font.system(size: 50))
+                    .font(Font.system(size: 42))
                     .background(Color.mint)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
                 
                 Spacer()
                 
                 Text("1. \(game_controller.isPairComplete ? "..." : game_controller.coup_saved.move ) 2. ...")
-                    .font(Font.system(size: 30))
+                    .font(Font.system(size: 27))
                     .background(Color.mint)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
 
@@ -32,7 +32,7 @@ struct MoveView: View {
                     game_controller.remove_last()
                 }) {
                     Text("DEL")
-                        .font(Font.system(size: 30))
+                        .font(Font.system(size: 27))
                         .foregroundStyle(Color.orange)
                 }.buttonStyle(actionStyle(color: Color.mint))
             }
@@ -101,7 +101,8 @@ struct MoveView: View {
                             Text(thatchar)
                                 .cornerRadius(8)
                         }
-                        .buttonStyle(actionStyle(color: game_controller.game.id_ > 5 ? Color.blue : Color.gray))
+                        .buttonStyle(actionStyle(color: (game_controller.game.id_ > 3 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
+                        .disabled((game_controller.game.id_ > 3 && game_controller.buttonsController.rockAllowed) ? false : true)
                     }
                 }
                 
@@ -132,6 +133,8 @@ struct MoveView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
             }
+            .disabled(game_controller.buttonsController.moveAllowed ? false : true)
+            .blur(radius: game_controller.buttonsController.moveAllowed ? 0 : 4)
             .padding(.top)
             
             List {

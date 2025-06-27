@@ -14,7 +14,8 @@ struct ButtonsController {
     var fileAllowed: Bool = true
     var piecesAllowed: Bool = true
     var moveAllowed: Bool = false
-    
+    var rockAllowed: Bool = false
+
     mutating func ControlButtons(forInput input: String) {
         if input == "..." {
             print("...")
@@ -24,6 +25,7 @@ struct ButtonsController {
             fileAllowed = true
             piecesAllowed = true
             moveAllowed = false
+            rockAllowed = true
         } else if input.matches(movesRegexes.pawn.rawValue) || input.matches(movesRegexes.piece_file.rawValue) { // a & Nc
             takeAllowed = false
             checkAllowed = false
@@ -31,7 +33,7 @@ struct ButtonsController {
             fileAllowed = false
             piecesAllowed = false
             moveAllowed = false
-            
+            rockAllowed = false
         } else if input.matches(movesRegexes.piece.rawValue) { // N
             takeAllowed = false
             checkAllowed = false
@@ -39,6 +41,7 @@ struct ButtonsController {
             fileAllowed = true
             piecesAllowed = false
             moveAllowed = false
+            rockAllowed = false
         } else if input.matches(movesRegexes.pawn_rank.rawValue) || input.matches(movesRegexes.piece_file_rank.rawValue) { // e4 & Nc3
             takeAllowed = false
             checkAllowed = true
@@ -46,6 +49,7 @@ struct ButtonsController {
             fileAllowed = false
             piecesAllowed = false
             moveAllowed = true
+            rockAllowed = false
         } else if input.matches(movesRegexes.pawn_taking.rawValue) || input.matches(movesRegexes.piece_taking.rawValue) { // ex & Nx
             takeAllowed = false
             checkAllowed = false
@@ -53,6 +57,7 @@ struct ButtonsController {
             fileAllowed = true
             piecesAllowed = false
             moveAllowed = false
+            rockAllowed = false
         } else if input.matches(movesRegexes.pawn_taking_file.rawValue) || input.matches(movesRegexes.piece_taking_file.rawValue) { // exf & Nxf
             takeAllowed = false
             checkAllowed = false
@@ -60,6 +65,7 @@ struct ButtonsController {
             fileAllowed = false
             piecesAllowed = false
             moveAllowed = false
+            rockAllowed = false
         } else if input.matches(movesRegexes.pawn_taking_file_rank.rawValue) || input.matches(movesRegexes.piece_taking_file_rank.rawValue) { // exf4 & Nxf4
             takeAllowed = false
             checkAllowed = true
@@ -67,6 +73,7 @@ struct ButtonsController {
             fileAllowed = false
             piecesAllowed = false
             moveAllowed = true
+            rockAllowed = false
         } else if input.matches(movesRegexes.all_rocks.rawValue) { // O-O-O
             takeAllowed = false
             checkAllowed = true
@@ -74,6 +81,7 @@ struct ButtonsController {
             fileAllowed = false
             piecesAllowed = false
             moveAllowed = true
+            rockAllowed = false
         } else if input.matches(movesRegexes.all_checked.rawValue) || input.matches(movesRegexes.rock_checked.rawValue) { // +
             takeAllowed = false
             checkAllowed = false
@@ -81,7 +89,8 @@ struct ButtonsController {
             fileAllowed = false
             piecesAllowed = false
             moveAllowed = true
-        }      
+            rockAllowed = false
+        }
     }
 }
 
