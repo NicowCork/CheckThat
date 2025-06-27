@@ -22,7 +22,7 @@ class GameController: ObservableObject {
     }
     @Published var game: Game
     @Published var isPairComplete: Bool
-    @Published var coup_saved: Move = Move(move_date: Date(), move: "")
+    @Published var coup_saved: Move = Move(move_date: Date(), move: "...")
     @Published var buttonsController: ButtonsController = ButtonsController()
     
     func add_character(_ character: String) {

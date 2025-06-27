@@ -14,39 +14,20 @@ struct MoveView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            
             // Coup actuellement joué & Delete button
             HStack(spacing: 15) {
-//                HStack {
-//                    RoundedRectangle(cornerRadius: 0)
-//                        .frame(width: 25, height: 25)
-//                        .overlay {
-//                            RoundedRectangle(cornerRadius: 50, style: .continuous).fill(Color.black)
-//                        }
-//                        
-//                    RoundedRectangle(cornerRadius: 0)
-//                        .frame(width: 25, height: 25)
-//                        .overlay {
-//                            RoundedRectangle(cornerRadius: 50, style: .continuous).fill(Color.white)
-//                        }
-//                }
+                Text(game_controller.actual_move)
+                    .font(Font.system(size: 50))
+                    .background(Color.mint)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
                 
                 Spacer()
                 
-                HStack {
-                    Text("Move:")
-                        .font(Font.system(size: 35))
-                        .background(Color.mint)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                    Text(game_controller.actual_move)
-                        .font(Font.system(size: 35))
-                        .background(Color.mint)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                    
-                }.overlay {
-                    RoundedRectangle(cornerRadius: 5, style: .continuous)
-                        .strokeBorder(Color.mint, lineWidth: 1)
-                }
+                Text("1. \(game_controller.isPairComplete ? "..." : game_controller.coup_saved.move ) 2. ...")
+                    .font(Font.system(size: 30))
+                    .background(Color.mint)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+
                 Button (action: {
                     game_controller.remove_last()
                 }) {
@@ -54,7 +35,6 @@ struct MoveView: View {
                         .font(Font.system(size: 30))
                         .foregroundStyle(Color.orange)
                 }.buttonStyle(actionStyle(color: Color.mint))
-                
             }
             
             // Grille des colonnes / pions
@@ -66,8 +46,8 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(thatStyle(color: game_controller.buttonsController.isFileAllowed ? Color.blue : Color.gray))
-                    .disabled(game_controller.buttonsController.isFileAllowed ? false : true)
+                    .buttonStyle(thatStyle(color: game_controller.buttonsController.fileAllowed ? Color.blue : Color.gray))
+                    .disabled(game_controller.buttonsController.fileAllowed ? false : true)
                 }
             }
             
@@ -80,13 +60,11 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(thatStyle(color: game_controller.buttonsController.isRankAllowed ? Color.blue : Color.gray))
-                    .disabled(game_controller.buttonsController.isRankAllowed ? false : true)
+                    .buttonStyle(thatStyle(color: game_controller.buttonsController.rankAllowed ? Color.blue : Color.gray))
+                    .disabled(game_controller.buttonsController.rankAllowed ? false : true)
                 }
             }
-            
-            
-            
+   
             // Grille des pièces majeurs
             HStack {
                 ForEach(moves.pieces_letters, id: \.self) { thatchar in
@@ -96,8 +74,8 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(thatStyle(color: game_controller.buttonsController.isPiecesAllowed ? Color.blue : Color.gray))
-                    .disabled(game_controller.buttonsController.isPiecesAllowed ? false : true)
+                    .buttonStyle(thatStyle(color: game_controller.buttonsController.piecesAllowed ? Color.blue : Color.gray))
+                    .disabled(game_controller.buttonsController.piecesAllowed ? false : true)
                 }
             }
             Divider()
@@ -110,8 +88,8 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(actionStyle(color: game_controller.buttonsController.isTakeAllowed ? Color.blue : Color.gray))
-                    .disabled(game_controller.buttonsController.isTakeAllowed ? false : true)
+                    .buttonStyle(actionStyle(color: game_controller.buttonsController.takeAllowed ? Color.blue : Color.gray))
+                    .disabled(game_controller.buttonsController.takeAllowed ? false : true)
                     
                 }
                 
@@ -134,8 +112,8 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(actionStyle(color: game_controller.buttonsController.isCheckAllowed ? Color.blue : Color.gray))
-                    .disabled(game_controller.buttonsController.isCheckAllowed ? false : true)
+                    .buttonStyle(actionStyle(color: game_controller.buttonsController.checkAllowed ? Color.blue : Color.gray))
+                    .disabled(game_controller.buttonsController.checkAllowed ? false : true)
                 }
             }
             Divider()
@@ -156,11 +134,6 @@ struct MoveView: View {
             }
             .padding(.top)
             
-            // Dernier coup
-//            Text("Dernier coup : \(game_controller.game.moves.last?.move_one.move ?? "N/A") : \((game_controller.game.moves.last?.move_two.move) ?? "N/A")")
-//                .font(.subheadline)
-//                .foregroundColor(.secondary)
-//                .padding(.top)
             List {
                 ForEach(game_controller.game.moves) { move in
                     HStack {
