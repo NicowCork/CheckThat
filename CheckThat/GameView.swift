@@ -16,23 +16,44 @@ struct MoveView: View {
         VStack(spacing: 20) {
             // Coup actuellement joué & Delete button
             HStack(spacing: 15) {
-                Text(game_controller.actual_move)
-                    .font(Font.system(size: 42))
+//                Text(game_controller.actual_move)
+//                    .font(Font.system(size: 42))
+//                    .background(Color.mint)
+//                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                Text("1. ")
+                    .font(Font.system(size: 20))
+                    .background(Color.mint)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .offset(y: 10)
+                Text(game_controller.isPairComplete ? game_controller.actual_move : game_controller.coup_saved.move)
+                    .font(Font.system(size: 33))
+                    .background(Color.mint)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+    
+                Text("2. ")
+                    .font(Font.system(size: 20))
+                    .background(Color.mint)
+                    .clipShape(RoundedRectangle(cornerRadius: 5))
+                    .offset(y: 10)
+                Text(game_controller.isPairComplete ? "..." : game_controller.actual_move)
+                    .font(Font.system(size: 33))
                     .background(Color.mint)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
                 
+                Spacer(minLength: 1)
+            }
+            
+            HStack {
                 Spacer()
-                
-                Text("1. \(game_controller.isPairComplete ? "..." : game_controller.coup_saved.move ) 2. ...")
-                    .font(Font.system(size: 27))
-                    .background(Color.mint)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-
                 Button (action: {
-                    game_controller.remove_last()
+                    if game_controller.actual_move == "O-O" || game_controller.actual_move == "O-O+" || game_controller.actual_move == "O-O-O" || game_controller.actual_move == "O-O-O+" {
+                        game_controller.actual_move = "..."
+                    } else {
+                        game_controller.remove_last()
+                    }
                 }) {
                     Text("DEL")
-                        .font(Font.system(size: 27))
+                        .font(Font.system(size: 22))
                         .foregroundStyle(Color.orange)
                 }.buttonStyle(actionStyle(color: Color.mint))
             }
@@ -88,8 +109,8 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(actionStyle(color: game_controller.buttonsController.takeAllowed ? Color.blue : Color.gray))
-                    .disabled(game_controller.buttonsController.takeAllowed ? false : true)
+                    .buttonStyle(actionStyle(color: (game_controller.buttonsController.takeAllowed && game_controller.game.id_ > 1)  ? Color.blue : Color.gray))
+                    .disabled((game_controller.buttonsController.takeAllowed && game_controller.game.id_ > 1) ? false : true)
                     
                 }
                 
@@ -113,8 +134,8 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(actionStyle(color: game_controller.buttonsController.checkAllowed ? Color.blue : Color.gray))
-                    .disabled(game_controller.buttonsController.checkAllowed ? false : true)
+                    .buttonStyle(actionStyle(color: (game_controller.buttonsController.checkAllowed && game_controller.game.id_ > 2) ? Color.blue : Color.gray))
+                    .disabled((game_controller.buttonsController.checkAllowed && game_controller.game.id_ > 2) ? false : true)
                 }
             }
             Divider()

@@ -26,8 +26,8 @@ struct ButtonsController {
             piecesAllowed = true
             moveAllowed = false
             rockAllowed = true
-        } else if input.matches(movesRegexes.pawn.rawValue) || input.matches(movesRegexes.piece_file.rawValue) { // a & Nc
-            takeAllowed = false
+        } else if input.matches(movesRegexes.pawn.rawValue) { // a
+            takeAllowed = true
             checkAllowed = false
             rankAllowed = true
             fileAllowed = false
@@ -35,10 +35,18 @@ struct ButtonsController {
             moveAllowed = false
             rockAllowed = false
         } else if input.matches(movesRegexes.piece.rawValue) { // N
-            takeAllowed = false
+            takeAllowed = true
             checkAllowed = false
             rankAllowed = false
             fileAllowed = true
+            piecesAllowed = false
+            moveAllowed = false
+            rockAllowed = false
+        } else if input.matches(movesRegexes.piece_file.rawValue) { // Nc
+            takeAllowed = false
+            checkAllowed = false
+            rankAllowed = true
+            fileAllowed = false
             piecesAllowed = false
             moveAllowed = false
             rockAllowed = false
@@ -106,7 +114,7 @@ enum movesRegexes: String {
     case piece_taking_file = "^[KQRBN]x[a-h]$" // piece capture colonne
     case piece_taking_file_rank = "^[KQRBN]x[a-h][1-8]$" // piece capture complète
     case pawn_taking_file_rank = "^[a-h]x[a-h][1-8]$" // pawn capture  complète
-    case all_rocks = "^O-O(-O)?\\$" // rocks
+    case all_rocks = "^O-O(-O)?$" // rocks
     case all_checked = "^(([KQRBN][a-h][1-8]|[a-h][1-8])|([KQRBN]x[a-h][1-8])|([a-h]x[a-h][1-8]))+$" // pieces checked
     case rock_checked = "^O-O(-O)?\\+?$" // rocks and checks
 }
