@@ -11,10 +11,11 @@ struct Game: Identifiable {
     let id = UUID()
     let game_date = Date()
     var moves: [PairMove] = []
-    var id_ : Int = 1
+    var id_ : Int = 0
 }
 
 struct PairMove: Identifiable {
+    var id_: Int
     let id = UUID()
     let move_one: Move
     let move_two: Move
@@ -33,4 +34,5 @@ struct MovesData {
     let take = ["TAKE"]
     let rocks = ["O-O-O", "O-O"]
     let check = ["CHECK"]
+    let mate = ["MATE"]
 }

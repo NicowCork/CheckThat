@@ -15,32 +15,32 @@ struct MoveView: View {
     var body: some View {
         VStack(spacing: 20) {
             // Coup actuellement joué & Delete button
-            HStack(spacing: 15) {
-//                Text(game_controller.actual_move)
-//                    .font(Font.system(size: 42))
-//                    .background(Color.mint)
-//                    .clipShape(RoundedRectangle(cornerRadius: 5))
-                Text("1. ")
-                    .font(Font.system(size: 20))
-                    .background(Color.mint)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-                    .offset(y: 10)
-                Text(game_controller.isPairComplete ? game_controller.actual_move : game_controller.coup_saved.move)
-                    .font(Font.system(size: 33))
-                    .background(Color.mint)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-    
-                Text("2. ")
-                    .font(Font.system(size: 20))
-                    .background(Color.mint)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
-                    .offset(y: 10)
-                Text(game_controller.isPairComplete ? "..." : game_controller.actual_move)
-                    .font(Font.system(size: 33))
-                    .background(Color.mint)
-                    .clipShape(RoundedRectangle(cornerRadius: 5))
+            HStack {
+                HStack(spacing: 15) {
+                    Text("1. ")
+                        .font(Font.system(size: 20))
+                        .background(Color.mint)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .offset(y: 10)
+                    Text(game_controller.isPairComplete ? game_controller.actual_move : game_controller.coup_saved.move)
+                        .font(Font.system(size: 33))
+                        .background(Color.mint)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+        
+                    Text("2. ")
+                        .font(Font.system(size: 20))
+                        .background(Color.mint)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .offset(y: 10)
+                    Text(game_controller.isPairComplete ? "..." : game_controller.actual_move)
+                        .font(Font.system(size: 33))
+                        .background(Color.mint)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                }
+                .background(Color.mint)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
                 
-                Spacer(minLength: 1)
+                Spacer(minLength: 30)
             }
             
             HStack {
@@ -102,18 +102,28 @@ struct MoveView: View {
             Divider()
             // Grille des actions
             HStack {
-                ForEach(moves.take, id: \.self) { thatchar in
-                    Button(action: {
-                        game_controller.add_character("x")
-                    }) {
-                        Text(thatchar)
-                            .cornerRadius(8)
+                VStack {
+                    ForEach(moves.check, id: \.self) { thatchar in
+                        Button(action: {
+                            game_controller.add_character("+")
+                        }) {
+                            Text(thatchar)
+                                .cornerRadius(8)
+                        }
+                        .buttonStyle(actionStyle(color: (game_controller.buttonsController.checkAllowed && game_controller.game.id_ > 2) ? Color.blue : Color.gray))
+                        .disabled((game_controller.buttonsController.checkAllowed && game_controller.game.id_ > 2) ? false : true)
                     }
-                    .buttonStyle(actionStyle(color: (game_controller.buttonsController.takeAllowed && game_controller.game.id_ > 1)  ? Color.blue : Color.gray))
-                    .disabled((game_controller.buttonsController.takeAllowed && game_controller.game.id_ > 1) ? false : true)
-                    
+                    ForEach(moves.mate, id: \.self) { thatchar in
+                        Button(action: {
+                            game_controller.add_character("#")
+                        }) {
+                            Text(thatchar)
+                                .cornerRadius(8)
+                        }
+                        .buttonStyle(actionStyle(color: (game_controller.buttonsController.mateAllowed && game_controller.game.id_ > 1) ? Color.blue : Color.gray))
+                        .disabled((game_controller.buttonsController.mateAllowed && game_controller.game.id_ > 1) ? false : true)
+                    }
                 }
-                
                 VStack {
                     ForEach(moves.rocks, id: \.self) { thatchar in
                         Button(action: {
@@ -122,22 +132,23 @@ struct MoveView: View {
                             Text(thatchar)
                                 .cornerRadius(8)
                         }
-                        .buttonStyle(actionStyle(color: (game_controller.game.id_ > 3 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
-                        .disabled((game_controller.game.id_ > 3 && game_controller.buttonsController.rockAllowed) ? false : true)
+                        .buttonStyle(actionStyle(color: (game_controller.game.id_ > 2 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
+                        .disabled((game_controller.game.id_ > 2 && game_controller.buttonsController.rockAllowed) ? false : true)
                     }
                 }
-                
-                ForEach(moves.check, id: \.self) { thatchar in
+                ForEach(moves.take, id: \.self) { thatchar in
                     Button(action: {
-                        game_controller.add_character("+")
+                        game_controller.add_character("x")
                     }) {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(actionStyle(color: (game_controller.buttonsController.checkAllowed && game_controller.game.id_ > 2) ? Color.blue : Color.gray))
-                    .disabled((game_controller.buttonsController.checkAllowed && game_controller.game.id_ > 2) ? false : true)
+                    .buttonStyle(takeStyle(color: (game_controller.buttonsController.takeAllowed && game_controller.game.id_ > 1)  ? Color.blue : Color.gray))
+                    .disabled((game_controller.buttonsController.takeAllowed && game_controller.game.id_ > 1) ? false : true)
+                    
                 }
             }
+            
             Divider()
             // Bouton valider
             Button(action: {
@@ -158,14 +169,17 @@ struct MoveView: View {
             .blur(radius: game_controller.buttonsController.moveAllowed ? 0 : 4)
             .padding(.top)
             
+            Spacer()
+            
             List {
                 ForEach(game_controller.game.moves) { move in
                     HStack {
-                        Text("\(move.move_one.move) : \(move.move_two.move)")
+                        Text("\(move.id_). \(move.move_one.move) : \(move.move_two.move)")
                             .scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip list items here
                     }
                 }
             }.scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip the list itself here
+                .scrollContentBackground(.hidden)
         }
         .padding()
     }

@@ -26,6 +26,7 @@ struct CheckThatApp: App {
     var body: some Scene {
         WindowGroup {
             MoveView()
+                .background(Color(#colorLiteral(red: 0.6952707171, green: 0.7289204001, blue: 0.8866919875, alpha: 1)))
         }
 //        .modelContainer(sharedModelContainer)
     }

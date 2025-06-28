@@ -32,15 +32,16 @@ struct actionStyle: ButtonStyle {
     }
 }
 
-struct colorStyle: ButtonStyle {
+struct takeStyle: ButtonStyle {
     let color: Color
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 26, weight: .bold))
+            .frame(width: 73, height: 73)
+            .font(.system(size: 23, weight: .bold))
             .padding(EdgeInsets(top: 5, leading: 15, bottom: 5, trailing: 15))
             .foregroundStyle(.white)
             .background(color)
-            .clipShape(RoundedRectangle(cornerRadius: 0))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 

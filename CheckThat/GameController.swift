@@ -22,6 +22,7 @@ class GameController: ObservableObject {
     }
     @Published var game: Game
     @Published var isPairComplete: Bool
+    @Published var isGameFinished: Bool = false
     @Published var coup_saved: Move = Move(move_date: Date(), move: "...")
     @Published var buttonsController: ButtonsController = ButtonsController()
     
@@ -44,7 +45,8 @@ class GameController: ObservableObject {
     }
     
     func save_pair(withMoveSaved move_saved: Move, andMove move: Move) {
-        game.moves.append(PairMove(move_one: move_saved, move_two: move))
+        let pairId: Int = game.id_ + 1
+        game.moves.append(PairMove(id_: pairId, move_one: move_saved, move_two: move))
         game.id_ += 1
         actual_move = "..."
         isPairComplete = true
@@ -54,6 +56,8 @@ class GameController: ObservableObject {
         if actual_move.count < 2 || actual_move.isEmpty || actual_move.count > 7 {
             playSound(sound: "Pouet", type: "mp3")
             print("Coup non valide")
+        } else if actual_move.last == "#"{
+            isGameFinished = true
         } else {
             coup_saved = move
             actual_move = "..."
