@@ -224,6 +224,7 @@ struct MoveView: View {
                     .scrollContentBackground(.hidden)
                     .blur(radius: game_controller.isGameFinished ? 4 : 0 )
             }
+            .disabled(game_controller.isGameFinished ? true : false)
             .zIndex(1)
             .padding()
             

@@ -78,6 +78,7 @@ class GameController: ObservableObject {
     
     func newGame() {
         actual_move = "..."
+        result = ""
         self.game = Game()
         self.isPairComplete = true
         self.isGameFinished = false
