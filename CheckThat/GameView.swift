@@ -20,6 +20,13 @@ struct MoveView: View {
     @State var isResetPressed: Bool = false
     @State var scale: CGFloat = 1.0
     
+    enum Field {
+        case white_n, black_n, white_e, black_e, event, site
+    }
+    @FocusState private var focusedField: Field?
+    @FocusState var isWhiteNameFieldFocused: Bool
+    @FocusState var isBlackNameFieldFocused: Bool
+    
     let moves = MovesData()
     
     var body: some View {
@@ -233,13 +240,14 @@ struct MoveView: View {
                             .blur(radius: (white_name.isEmpty || black_name.isEmpty) ? 2 : 0 )
                     }
                     Button(action: {
-                        // warning message
                         game_controller.newGame()
                         white_name = ""
                         black_name = ""
+                        white_elo = ""
+                        black_elo = ""
                         result = ""
                         event = ""
-                        
+                        site = ""
                     }) {
                         Text("NEW GAME")
                             .font(Font.system(size: 15))
@@ -250,6 +258,8 @@ struct MoveView: View {
                 HStack {
                     Text("White:")
                     TextField("White Player Name", text: $white_name)
+                        .focused($focusedField, equals: .white_n)
+                        .focused($isWhiteNameFieldFocused)
                 }
 
                 .padding(5)
@@ -262,6 +272,8 @@ struct MoveView: View {
                 HStack {
                     Text("Black:")
                     TextField("Black Player Name", text: $black_name)
+                        .focused($focusedField, equals: .black_n)
+                        .focused($isBlackNameFieldFocused)
                 }
                 .padding(5)
                 .background()
@@ -283,6 +295,13 @@ struct MoveView: View {
                 HStack {
                     Text("White Elo:")
                     TextField("White Elo (Optional)", text: $white_elo)
+                        .focused($focusedField, equals: .white_e)
+                        .keyboardType(.numberPad)
+                        .onChange(of: white_elo) { newValue in
+                            if newValue.count > 4 {
+                                white_elo = String(newValue.prefix(4))
+                            }
+                        }
                 }
                 .padding(5)
                 .background()
@@ -294,6 +313,13 @@ struct MoveView: View {
                 HStack {
                     Text("Black Elo:")
                     TextField("Black Elo (Optional)", text: $black_elo)
+                        .focused($focusedField, equals: .black_e)
+                        .keyboardType(.numberPad)
+                        .onChange(of: black_elo) { newValue in
+                            if newValue.count > 4 {
+                                black_elo = String(newValue.prefix(4))
+                            }
+                        }
                 }
                 .padding(5)
                 .background()
@@ -305,6 +331,7 @@ struct MoveView: View {
                 HStack {
                     Text("Event:")
                     TextField("Event Name (Optional)", text: $event)
+                        .focused($focusedField, equals: .event)
                 }
                 .padding(5)
                 .background()
@@ -316,6 +343,7 @@ struct MoveView: View {
                 HStack {
                     Text("Site:")
                     TextField("Site Name (Optional)", text: $site)
+                        .focused($focusedField, equals: .site)
                 }
                 .padding(5)
                 .background()
@@ -337,8 +365,15 @@ struct MoveView: View {
                 
             }
             .onSubmit {
-                writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: result, event: event, site: site, blackElo: black_elo, whiteElo: white_elo), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
+                writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: game_controller.result, event: event, site: site, blackElo: black_elo, whiteElo: white_elo), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
+                if focusedField == .white_n {
+                    focusedField = .black_n
+                }
+                if focusedField == .black_n {
+                    focusedField = .white_e
+                }
             }
+            .submitLabel(.done)
             .autocorrectionDisabled()
             .padding()
             .frame(width: 340, height: 630, alignment: .center)
@@ -350,6 +385,33 @@ struct MoveView: View {
             )
             .zIndex(game_controller.isGameFinished ? 2 : 0)
             .opacity(game_controller.isGameFinished ? 2 : 0)
+            .offset(y: isWhiteNameFieldFocused ? 40 : 0)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard){
+                     Spacer()
+                     Button("Done") {
+                         writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: game_controller.result, event: event, site: site, blackElo: black_elo, whiteElo: white_elo), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
+                         if focusedField == .white_n {
+                             focusedField = .black_n
+                         }
+                         if focusedField == .black_n {
+                             focusedField = .white_e
+                         }
+                         if focusedField == .white_e {
+                             focusedField = .black_e
+                         }
+                         if focusedField == .black_e {
+                             focusedField = .event
+                         }
+                         if focusedField == .event {
+                             focusedField = .site
+                         }
+                         if focusedField == .site {
+                             UIApplication.shared.dismissKeyboard()
+                         }
+                      }
+                  }
+              }
             
             if isResetPressed {
                 VStack {
@@ -428,8 +490,6 @@ struct MoveView: View {
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(.blue, lineWidth: 3)
                 )
-                
-                
                 .frame(width: 340, height: 330)
                 .zIndex(isDrawOffered ? 3 : -1)
             }

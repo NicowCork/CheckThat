@@ -26,7 +26,7 @@ class GameController: ObservableObject {
     @Published var coup_saved: Move = Move(move: "...")
     @Published var buttonsController: ButtonsController = ButtonsController()
     
-    var result: String = ""
+    @Published var result: String = ""
     
     func add_character(_ character: String) {
         if actual_move == "..." {
@@ -46,7 +46,7 @@ class GameController: ObservableObject {
         }
     }
     
-    func save_pair(withMoveSaved move_saved: Move, andMove move: Move) {
+    func save_pair(withMoveSaved: Move, andMove move: Move) {
         let pairId: Int = game.id_ + 1
         game.pair_Moves.append(PairMove(id_: pairId, move_one: coup_saved, move_two: move))
         
@@ -76,6 +76,14 @@ class GameController: ObservableObject {
         }
     }
     
+    func newGame() {
+        actual_move = "..."
+        self.game = Game()
+        self.isPairComplete = true
+        self.isGameFinished = false
+        self.coup_saved = Move(move: "...")
+    }
+    
     func getPGNContent(forWhite white: String, andBlack black : String, result: String, event: String?, site: String?, blackElo: String?, whiteElo: String?) -> String {
         var pgn_moves = ""
         for moves in game.pair_Moves {
@@ -91,17 +99,8 @@ class GameController: ObservableObject {
             [Site "\(site ?? "N/A")"]
             [Result "\(result)"]
             
-            \(pgn_moves) \(self.result)
+            \(pgn_moves)\(self.result)
             """
         return pgnString
     }
-    
-    func newGame() {
-        actual_move = "..."
-        self.game = Game()
-        self.isPairComplete = true
-        self.isGameFinished = false
-        self.coup_saved = Move(move: "...")
-    }
 }
-

@@ -10,24 +10,11 @@ import SwiftData
 
 @main
 struct CheckThatApp: App {
-//    var sharedModelContainer: ModelContainer = {
-//        let schema = Schema([
-//            Item.self,
-//        ])
-//        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-//
-//        do {
-//            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-//        } catch {
-//            fatalError("Could not create ModelContainer: \(error)")
-//        }
-//    }()
 
     var body: some Scene {
         WindowGroup {
             MoveView()
                 .background(Color(#colorLiteral(red: 0.6952707171, green: 0.7289204001, blue: 0.8866919875, alpha: 1)))
         }
-//        .modelContainer(sharedModelContainer)
     }
 }
