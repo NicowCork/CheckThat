@@ -63,3 +63,16 @@ func playSound(sound: String, type: String) {
     }
 }
 
+func writeTextToFile(text: String, fileName: String) {
+    guard let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+    let fileURL = dir.appendingPathComponent(fileName)
+
+do {
+        try text.write(to: fileURL, atomically: true, encoding: .utf8)
+        print("File written to: \(fileURL)")
+    } catch {
+        print("Error writing file: \(error.localizedDescription)")
+    }
+}
+
+

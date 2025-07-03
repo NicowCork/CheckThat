@@ -23,7 +23,7 @@ class GameController: ObservableObject {
     @Published var game: Game
     @Published var isPairComplete: Bool
     @Published var isGameFinished: Bool = false
-    @Published var coup_saved: Move = Move(move_date: Date(), move: "...")
+    @Published var coup_saved: Move = Move(move: "...")
     @Published var buttonsController: ButtonsController = ButtonsController()
     
     func add_character(_ character: String) {
@@ -46,23 +46,52 @@ class GameController: ObservableObject {
     
     func save_pair(withMoveSaved move_saved: Move, andMove move: Move) {
         let pairId: Int = game.id_ + 1
-        game.moves.append(PairMove(id_: pairId, move_one: move_saved, move_two: move))
-        game.id_ += 1
-        actual_move = "..."
-        isPairComplete = true
+        game.pair_Moves.append(PairMove(id_: pairId, move_one: coup_saved, move_two: move))
+        
+        if actual_move.last == "#" {
+            isGameFinished = true
+            
+        } else {
+            game.id_ += 1
+            actual_move = "..."
+            isPairComplete = true
+        }
     }
     
     func save_move(move: Move) {
-        if actual_move.count < 2 || actual_move.isEmpty || actual_move.count > 7 {
-            playSound(sound: "Pouet", type: "mp3")
-            print("Coup non valide")
-        } else if actual_move.last == "#"{
-            isGameFinished = true
+        if actual_move.last == "#" {
+            coup_saved = move
+            save_pair(withMoveSaved: move, andMove: Move(move: ""))
         } else {
             coup_saved = move
             actual_move = "..."
             isPairComplete = false
         }
+    }
+    
+    func getPGNContent(forWhite white: String, andBlack black : String, result: String, event: String?) -> String {
+        var pgn_moves = ""
+        for moves in game.pair_Moves {
+            let move = "\(moves.id_). \(moves.move_one.move) \(moves.move_two.move) "
+            pgn_moves += move
+        }
+        let pgnString = """
+            [White: \(white)]
+            [Black: \(black)]
+            [Result: \(result)]
+            [Event: \(event ?? "N/A")]
+            
+            \(pgn_moves)
+            """
+        return pgnString
+    }
+    
+    func newGame() {
+        actual_move = "..."
+        self.game = Game()
+        self.isPairComplete = true
+        self.isGameFinished = false
+        self.coup_saved = Move(move: "...")
     }
 }
 

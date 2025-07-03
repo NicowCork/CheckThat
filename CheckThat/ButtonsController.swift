@@ -19,7 +19,6 @@ struct ButtonsController {
 
     mutating func ControlButtons(forInput input: String) {
         if input == "..." {
-            print("...")
             takeAllowed = false
             checkAllowed = false
             rankAllowed = false

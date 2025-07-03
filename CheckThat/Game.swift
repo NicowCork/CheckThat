@@ -9,21 +9,20 @@ import Foundation
 
 struct Game: Identifiable {
     let id = UUID()
-    let game_date = Date()
-    var moves: [PairMove] = []
     var id_ : Int = 0
+    let game_date = Date()
+    var pair_Moves: [PairMove] = []
 }
 
 struct PairMove: Identifiable {
-    var id_: Int
     let id = UUID()
+    var id_: Int = 0
     let move_one: Move
     let move_two: Move
 }
 
 struct Move: Identifiable {
     let id = UUID()
-    let move_date: Date
     let move: String
 }
 
