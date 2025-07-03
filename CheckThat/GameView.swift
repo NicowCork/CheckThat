@@ -251,6 +251,8 @@ struct MoveView: View {
                     Text("White:")
                     TextField("White Player Name", text: $white_name)
                 }
+
+                .padding(5)
                 .background()
                 .cornerRadius(20)
                 .overlay(
@@ -261,6 +263,7 @@ struct MoveView: View {
                     Text("Black:")
                     TextField("Black Player Name", text: $black_name)
                 }
+                .padding(5)
                 .background()
                 .cornerRadius(20)
                 .overlay(
@@ -270,6 +273,7 @@ struct MoveView: View {
                 HStack {
                     Text("Result: \(game_controller.result)")
                 }
+                .padding(5)
                 .background()
                 .cornerRadius(20)
                 .overlay(
@@ -280,6 +284,7 @@ struct MoveView: View {
                     Text("White Elo:")
                     TextField("White Elo (Optional)", text: $white_elo)
                 }
+                .padding(5)
                 .background()
                 .cornerRadius(20)
                 .overlay(
@@ -290,6 +295,7 @@ struct MoveView: View {
                     Text("Black Elo:")
                     TextField("Black Elo (Optional)", text: $black_elo)
                 }
+                .padding(5)
                 .background()
                 .cornerRadius(20)
                 .overlay(
@@ -300,6 +306,7 @@ struct MoveView: View {
                     Text("Event:")
                     TextField("Event Name (Optional)", text: $event)
                 }
+                .padding(5)
                 .background()
                 .cornerRadius(20)
                 .overlay(
@@ -310,6 +317,7 @@ struct MoveView: View {
                     Text("Site:")
                     TextField("Site Name (Optional)", text: $site)
                 }
+                .padding(5)
                 .background()
                 .cornerRadius(20)
                 .overlay(
@@ -333,7 +341,7 @@ struct MoveView: View {
             }
             .autocorrectionDisabled()
             .padding()
-            .frame(width: 340, height: 530, alignment: .center)
+            .frame(width: 340, height: 630, alignment: .center)
             .background(Color.mint)
             .cornerRadius(20)
             .overlay(
