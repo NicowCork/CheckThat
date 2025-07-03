@@ -16,6 +16,9 @@ struct MoveView: View {
     @State var result = ""
     @State var event = ""
     @State var site = ""
+    @State var isDrawOffered: Bool = false
+    @State var isResetPressed: Bool = false
+    @State var scale: CGFloat = 1.0
     
     let moves = MovesData()
     
@@ -35,7 +38,7 @@ struct MoveView: View {
                             .font(Font.system(size: 33))
                             .background(Color.mint)
                             .clipShape(RoundedRectangle(cornerRadius: 5))
-            
+                        
                         Text("2. ")
                             .font(Font.system(size: 20))
                             .background(Color.mint)
@@ -57,12 +60,10 @@ struct MoveView: View {
                 HStack {
                     
                     Button(action: {
-                        //warning message x2
-                        game_controller.result = "1/2-1/2"
-                        game_controller.isGameFinished = true
+                        isDrawOffered = true
                     }) {
                         Text("DRAW")
-                         .font(Font.system(size: 22))
+                            .font(Font.system(size: 22))
                     }
                     .buttonStyle(actionStyle(color: Color.blue))
                     .blur(radius: game_controller.game.id_ <= 2 ? 2 : 0)
@@ -71,16 +72,15 @@ struct MoveView: View {
                     Spacer()
                     
                     Button(action: {
-                        // warning message
-                        game_controller.newGame()
+                        isResetPressed = true
                     }) {
                         Text("RESET")
                             .font(Font.system(size: 22))
-
+                        
                     }.buttonStyle(actionStyle(color: Color.mint))
-                    .blur(radius: game_controller.isGameFinished ? 4 : 0)
-    
-          
+                        .blur(radius: game_controller.isGameFinished ? 4 : 0)
+                    
+                    
                     Button (action: {
                         if game_controller.actual_move == "O-O" || game_controller.actual_move == "O-O+" || game_controller.actual_move == "O-O-O" || game_controller.actual_move == "O-O-O+" {
                             game_controller.actual_move = "..."
@@ -91,8 +91,8 @@ struct MoveView: View {
                         Text("DEL")
                             .font(Font.system(size: 22))
                     }.buttonStyle(actionStyle(color: Color.mint))
-                    .blur(radius: game_controller.isGameFinished ? 4 : 0 )
-                    .disabled(game_controller.isGameFinished ? true : false)
+                        .blur(radius: game_controller.isGameFinished ? 4 : 0 )
+                        .disabled(game_controller.isGameFinished ? true : false)
                 }
                 
                 // Grille des colonnes / pions
@@ -122,7 +122,7 @@ struct MoveView: View {
                         .disabled(game_controller.buttonsController.rankAllowed ? false : true)
                     }
                 }.blur(radius: game_controller.isGameFinished ? 4 : 0 )
-       
+                
                 // Grille des pièces majeurs
                 HStack {
                     ForEach(moves.pieces_letters, id: \.self) { thatchar in
@@ -185,7 +185,7 @@ struct MoveView: View {
                         
                     }
                 }.blur(radius: game_controller.isGameFinished ? 4 : 0 )
-                .disabled(game_controller.isGameFinished ? true : false)
+                    .disabled(game_controller.isGameFinished ? true : false)
                 
                 Divider()
                 // Bouton valider
@@ -200,9 +200,9 @@ struct MoveView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                 }.blur(radius: game_controller.isGameFinished ? 4 : 0 )
-                .disabled(game_controller.buttonsController.moveAllowed ? false : true)
-                .blur(radius: game_controller.buttonsController.moveAllowed ? 0 : 4)
-                .padding(.top)
+                    .disabled(game_controller.buttonsController.moveAllowed ? false : true)
+                    .blur(radius: game_controller.buttonsController.moveAllowed ? 0 : 4)
+                    .padding(.top)
                 
                 Spacer()
                 
@@ -214,15 +214,15 @@ struct MoveView: View {
                         }
                     }
                 }.scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip the list itself here
-                .scrollContentBackground(.hidden)
-                .blur(radius: game_controller.isGameFinished ? 4 : 0 )
+                    .scrollContentBackground(.hidden)
+                    .blur(radius: game_controller.isGameFinished ? 4 : 0 )
             }
             .zIndex(1)
             .padding()
             
             VStack(alignment: .center, spacing: 20) {
                 HStack {
-
+                    
                     if let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn") {
                         
                         ShareLink(item: fileURL) {
@@ -239,84 +239,84 @@ struct MoveView: View {
                         black_name = ""
                         result = ""
                         event = ""
-
+                        
                     }) {
                         Text("NEW GAME")
                             .font(Font.system(size: 15))
-
+                        
                     }.buttonStyle(actionStyle(color: Color.purple))
                 }
- 
+                
                 HStack {
                     Text("White:")
                     TextField("White Player Name", text: $white_name)
                 }
                 .background()
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.blue, lineWidth: 2)
-                    )
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.blue, lineWidth: 2)
+                )
                 HStack {
                     Text("Black:")
                     TextField("Black Player Name", text: $black_name)
                 }
                 .background()
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.blue, lineWidth: 2)
-                    )
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.blue, lineWidth: 2)
+                )
                 HStack {
                     Text("Result: \(game_controller.result)")
                 }
                 .background()
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.blue, lineWidth: 2)
-                    )
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.blue, lineWidth: 2)
+                )
                 HStack {
                     Text("White Elo:")
                     TextField("White Elo (Optional)", text: $white_elo)
                 }
                 .background()
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.blue, lineWidth: 2)
-                    )
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.blue, lineWidth: 2)
+                )
                 HStack {
                     Text("Black Elo:")
                     TextField("Black Elo (Optional)", text: $black_elo)
                 }
                 .background()
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.blue, lineWidth: 2)
-                    )
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.blue, lineWidth: 2)
+                )
                 HStack {
                     Text("Event:")
                     TextField("Event Name (Optional)", text: $event)
                 }
                 .background()
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.blue, lineWidth: 2)
-                    )
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.blue, lineWidth: 2)
+                )
                 HStack {
                     Text("Site:")
                     TextField("Site Name (Optional)", text: $site)
                 }
                 .background()
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(.blue, lineWidth: 2)
-                    )
-                  
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.blue, lineWidth: 2)
+                )
+                
                 List {
                     ForEach(game_controller.game.pair_Moves) { pair_move in
                         HStack {
@@ -325,8 +325,8 @@ struct MoveView: View {
                         }
                     }
                 }.scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip the list itself here
-                .scrollContentBackground(.hidden)
-
+                    .scrollContentBackground(.hidden)
+                
             }
             .onSubmit {
                 writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: result, event: event, site: site, blackElo: black_elo, whiteElo: white_elo), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
@@ -335,13 +335,96 @@ struct MoveView: View {
             .padding()
             .frame(width: 340, height: 530, alignment: .center)
             .background(Color.mint)
+            .cornerRadius(20)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(.blue, lineWidth: 3)
+            )
+            .zIndex(game_controller.isGameFinished ? 2 : 0)
+            .opacity(game_controller.isGameFinished ? 2 : 0)
+            
+            if isResetPressed {
+                VStack {
+                    Text("Are you sure you want to reset the game?")
+                        .font(Font.system(size: 35))
+                        .bold()
+                        .foregroundStyle(Color.purple)
+                        .multilineTextAlignment(.center)
+                    
+                    Spacer()
+                    
+                    HStack {
+                        Button(action: {
+                            isResetPressed = false
+                            game_controller.newGame()
+                        }) {
+                            Text("Yes")
+                                .font(Font.system(size: 35))
+                        }
+                        
+                        Button(action: {
+                            isResetPressed = false
+                        }) {
+                            Text("No!")
+                                .font(Font.system(size: 35))
+                        }
+                    }
+                }
+                .padding()
+                .buttonStyle(actionStyle(color: Color.purple))
+                .frame(width: 340, height: 230)
+                .background(Color.mint)
                 .cornerRadius(20)
                 .overlay(
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(.blue, lineWidth: 3)
                 )
-            .zIndex(game_controller.isGameFinished ? 2 : 0)
-            .opacity(game_controller.isGameFinished ? 2 : 0)
+                .zIndex(isResetPressed ? 3 : -1)
+            }
+            
+            if isDrawOffered {
+                
+                VStack {
+                    Text("Are you sure you want to draw the game?")
+                        .font(Font.system(size: 35))
+                        .bold()
+                        .foregroundStyle(Color.purple)
+                        .multilineTextAlignment(.center)
+                    
+                    Spacer()
+                    
+                    HStack {
+                        Button(action: {
+                            game_controller.result = "1/2-1/2"
+                            game_controller.isGameFinished = true
+                            isDrawOffered = false
+                        }) {
+                            Text("Yes")
+                                .font(Font.system(size: 35))
+                        }
+                        
+                        Button(action: {
+                            isDrawOffered = false
+                        }) {
+                            Text("No!")
+                                .font(Font.system(size: 35))
+                        }
+                    }
+                }
+                .padding()
+                .buttonStyle(actionStyle(color: Color.purple))
+                .frame(width: 340, height: 230)
+                .background(Color.mint)
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.blue, lineWidth: 3)
+                )
+                
+                
+                .frame(width: 340, height: 330)
+                .zIndex(isDrawOffered ? 3 : -1)
+            }
         }
     }
 }
