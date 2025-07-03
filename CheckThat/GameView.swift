@@ -11,8 +11,11 @@ struct MoveView: View {
     @StateObject private var game_controller = GameController()
     @State var white_name = ""
     @State var black_name = ""
+    @State var white_elo = ""
+    @State var black_elo = ""
     @State var result = ""
     @State var event = ""
+    @State var site = ""
     
     let moves = MovesData()
     
@@ -52,6 +55,19 @@ struct MoveView: View {
                 Spacer(minLength: 10)
                 
                 HStack {
+                    
+                    Button(action: {
+                        //warning message x2
+                        game_controller.result = "1/2-1/2"
+                        game_controller.isGameFinished = true
+                    }) {
+                        Text("DRAW")
+                         .font(Font.system(size: 22))
+                    }
+                    .buttonStyle(actionStyle(color: Color.blue))
+                    .blur(radius: game_controller.game.id_ <= 2 ? 2 : 0)
+                    .disabled(game_controller.game.id_ <= 2 ? true : false)
+                    
                     Spacer()
                     
                     Button(action: {
@@ -63,7 +79,7 @@ struct MoveView: View {
 
                     }.buttonStyle(actionStyle(color: Color.mint))
                     .blur(radius: game_controller.isGameFinished ? 4 : 0)
-                    .disabled(game_controller.isGameFinished ? false : true)
+    
           
                     Button (action: {
                         if game_controller.actual_move == "O-O" || game_controller.actual_move == "O-O+" || game_controller.actual_move == "O-O-O" || game_controller.actual_move == "O-O-O+" {
@@ -123,7 +139,7 @@ struct MoveView: View {
                 Divider()
                 // Grille des actions
                 HStack {
-                    VStack {
+                    VStack { // check & mate
                         ForEach(moves.check, id: \.self) { thatchar in
                             Button(action: {
                                 game_controller.add_character("+")
@@ -213,10 +229,17 @@ struct MoveView: View {
                             Label("Share / Save", systemImage: "square.and.arrow.up")
                                 .font(Font.system(size: 15))
                         }.buttonStyle(actionStyle(color: Color.purple))
+                            .disabled((white_name.isEmpty || black_name.isEmpty) ? true : false)
+                            .blur(radius: (white_name.isEmpty || black_name.isEmpty) ? 2 : 0 )
                     }
                     Button(action: {
                         // warning message
                         game_controller.newGame()
+                        white_name = ""
+                        black_name = ""
+                        result = ""
+                        event = ""
+
                     }) {
                         Text("NEW GAME")
                             .font(Font.system(size: 15))
@@ -227,9 +250,6 @@ struct MoveView: View {
                 HStack {
                     Text("White:")
                     TextField("White Player Name", text: $white_name)
-                        .onSubmit {
-                            writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: result, event: event), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
-                        }
                 }
                 .background()
                     .cornerRadius(20)
@@ -240,9 +260,6 @@ struct MoveView: View {
                 HStack {
                     Text("Black:")
                     TextField("Black Player Name", text: $black_name)
-                        .onSubmit {
-                            writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: result, event: event), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
-                        }
                 }
                 .background()
                     .cornerRadius(20)
@@ -251,11 +268,27 @@ struct MoveView: View {
                             .stroke(.blue, lineWidth: 2)
                     )
                 HStack {
-                    Text("Result:")
-                    TextField("1-0 if white win or 1/2 1/2", text: $result)
-                        .onSubmit {
-                            writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: result, event: event), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
-                        }
+                    Text("Result: \(game_controller.result)")
+                }
+                .background()
+                    .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.blue, lineWidth: 2)
+                    )
+                HStack {
+                    Text("White Elo:")
+                    TextField("White Elo (Optional)", text: $white_elo)
+                }
+                .background()
+                    .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.blue, lineWidth: 2)
+                    )
+                HStack {
+                    Text("Black Elo:")
+                    TextField("Black Elo (Optional)", text: $black_elo)
                 }
                 .background()
                     .cornerRadius(20)
@@ -266,9 +299,6 @@ struct MoveView: View {
                 HStack {
                     Text("Event:")
                     TextField("Event Name (Optional)", text: $event)
-                        .onSubmit {
-                            writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: result, event: event), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
-                        }
                 }
                 .background()
                     .cornerRadius(20)
@@ -276,7 +306,17 @@ struct MoveView: View {
                         RoundedRectangle(cornerRadius: 20)
                             .stroke(.blue, lineWidth: 2)
                     )
-               
+                HStack {
+                    Text("Site:")
+                    TextField("Site Name (Optional)", text: $site)
+                }
+                .background()
+                    .cornerRadius(20)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(.blue, lineWidth: 2)
+                    )
+                  
                 List {
                     ForEach(game_controller.game.pair_Moves) { pair_move in
                         HStack {
@@ -287,6 +327,9 @@ struct MoveView: View {
                 }.scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip the list itself here
                 .scrollContentBackground(.hidden)
 
+            }
+            .onSubmit {
+                writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: result, event: event, site: site, blackElo: black_elo, whiteElo: white_elo), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
             }
             .autocorrectionDisabled()
             .padding()

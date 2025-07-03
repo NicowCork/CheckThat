@@ -26,6 +26,8 @@ class GameController: ObservableObject {
     @Published var coup_saved: Move = Move(move: "...")
     @Published var buttonsController: ButtonsController = ButtonsController()
     
+    var result: String = ""
+    
     func add_character(_ character: String) {
         if actual_move == "..." {
             actual_move = character
@@ -48,9 +50,14 @@ class GameController: ObservableObject {
         let pairId: Int = game.id_ + 1
         game.pair_Moves.append(PairMove(id_: pairId, move_one: coup_saved, move_two: move))
         
+        if game.pair_Moves.last?.move_one.move.last == "#" {
+            result = "1-0"
+        } else if game.pair_Moves.last?.move_two.move.last == "#" {
+            result = "0-1"
+        }
+        
         if actual_move.last == "#" {
             isGameFinished = true
-            
         } else {
             game.id_ += 1
             actual_move = "..."
@@ -69,19 +76,22 @@ class GameController: ObservableObject {
         }
     }
     
-    func getPGNContent(forWhite white: String, andBlack black : String, result: String, event: String?) -> String {
+    func getPGNContent(forWhite white: String, andBlack black : String, result: String, event: String?, site: String?, blackElo: String?, whiteElo: String?) -> String {
         var pgn_moves = ""
         for moves in game.pair_Moves {
-            let move = "\(moves.id_). \(moves.move_one.move) \(moves.move_two.move) "
-            pgn_moves += move
+            let move = "\(moves.id_).\(moves.move_one.move) \(moves.move_two.move)"
+            pgn_moves += " \(move)"
         }
         let pgnString = """
-            [White: \(white)]
-            [Black: \(black)]
-            [Result: \(result)]
-            [Event: \(event ?? "N/A")]
+            [White "\(white)"]
+            [Black "\(black)"]
+            [WhiteElo "\(whiteElo ?? "N/A")"]
+            [BlackElo "\(blackElo ?? "N/A")"]
+            [Event "\(event ?? "N/A")"]
+            [Site "\(site ?? "N/A")"]
+            [Result "\(result)"]
             
-            \(pgn_moves)
+            \(pgn_moves) \(self.result)
             """
         return pgnString
     }
