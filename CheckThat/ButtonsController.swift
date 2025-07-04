@@ -90,7 +90,7 @@ struct ButtonsController {
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
-        } else if input.matches(movesRegexes.piece_file_file.rawValue) { // Ncd
+        } else if input.matches(movesRegexes.piece_file_file.rawValue) { // Ncd file en litige
             takeAllowed = false
             checkAllowed = false
             rankAllowed = true
@@ -190,15 +190,15 @@ enum movesRegexes: String {
     case piece_file = "^[KQRBN][a-h]$" // pièce + colonne
     case piece_file_file = "^[KQRBN][a-h][a-h]$" // pièce + colonne + colonne
     case piece_file_file_rank = "^[KQRBN][a-h][a-h][1-8]$" // pièce + colonne + colonne
-    case pawn_rank = #"^[a-h][1-8]$"# // pion mouvement simple
+    case pawn_rank = "^[a-h][1-8]$" // pion mouvement simple
     case piece_file_rank = "^[KQRBN][a-h][1-8]$" // pièce + colonne + ligne
-    case piece_rank = #"^[KQRBN][1-8]$"# // pion mouvement simple
+    case piece_rank = "^[KQRBN][1-8]$" // pion mouvement simple
     case piece_file_rank_file = "^[KQRBN][a-h][1-8][a-h]$"
-    case piece_rank_file = #"^[KQRBN][1-8][a-h]$"# // pion mouvement simple
-    case piece_file_rank_file_rank =  #"^[KQRBN][a-h][1-8][a-h][1-8]$"#
-    case pawn_taking = #"^[a-h]x$"# // pion qui va capturer
+    case piece_rank_file = "^[KQRBN][1-8][a-h]$" // pion mouvement simple
+    case piece_file_rank_file_rank = "^[KQRBN][a-h][1-8][a-h][1-8]$"
+    case pawn_taking = "^[a-h]x$" // pion qui va capturer
     case piece_taking = "^[KQRBN]x$" // pièce qui va capturer
-    case pawn_taking_file = #"^[a-h]x[a-h]$"# // pion capture colonne
+    case pawn_taking_file = "^[a-h]x[a-h]$" // pion capture colonne
     case piece_taking_file = "^[KQRBN]x[a-h]$" // piece capture colonne
     case piece_taking_file_rank = "^[KQRBN]x[a-h][1-8]$" // piece capture complète
     case pawn_taking_file_rank = "^[a-h]x[a-h][1-8]$" // pawn capture  complète

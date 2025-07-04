@@ -28,6 +28,8 @@ class GameController: ObservableObject {
     
     @Published var result: String = ""
     
+    var gameToBeSaved: String = ""
+    
     func add_character(_ character: String) {
         if actual_move == "..." {
             actual_move = character
@@ -102,6 +104,7 @@ class GameController: ObservableObject {
             
             \(pgn_moves)\(self.result)
             """
+        gameToBeSaved = pgnString
         return pgnString
     }
 }

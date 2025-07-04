@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct MoveView: View {
     @StateObject private var game_controller = GameController()
@@ -18,6 +19,7 @@ struct MoveView: View {
     @State var site = ""
     @State var isDrawOffered: Bool = false
     @State var isResetPressed: Bool = false
+    @State var isHistoricPressed: Bool = false
     @State var scale: CGFloat = 1.0
     
     enum Field {
@@ -33,7 +35,7 @@ struct MoveView: View {
         
         ZStack {
             VStack(spacing: 20) {
-                // Coup actuellement joué & Delete button
+                
                 HStack {
                     HStack(spacing: 15) {
                         Text("1. ")
@@ -60,7 +62,14 @@ struct MoveView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     .blur(radius: game_controller.isGameFinished ? 4 : 0 )
                     Spacer(minLength: 30)
-                }
+                    
+                    Button(action: {
+                        isHistoricPressed.toggle()
+                    }) {
+                        Text("H")
+                    }
+                    .buttonStyle(actionStyle(color: isHistoricPressed ? Color.blue : Color.gray))
+                }  // MARK: Live Score & Historic button
                 
                 Spacer(minLength: 10)
                 
@@ -100,9 +109,8 @@ struct MoveView: View {
                     }.buttonStyle(actionStyle(color: Color.mint))
                         .blur(radius: game_controller.isGameFinished ? 4 : 0 )
                         .disabled(game_controller.isGameFinished ? true : false)
-                }
+                } // MARK: Draw, Reset & DEL
                 
-                // Grille des colonnes / pions
                 HStack(spacing: 1) {
                     ForEach(moves.letters, id: \.self) { thatchar in
                         Button(action: {
@@ -114,9 +122,8 @@ struct MoveView: View {
                         .buttonStyle(thatStyle(color: game_controller.buttonsController.fileAllowed ? Color.blue : Color.gray))
                         .disabled(game_controller.buttonsController.fileAllowed ? false : true)
                     }
-                }.blur(radius: game_controller.isGameFinished ? 4 : 0 )
+                }.blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Pawns/files
                 
-                // Grilles des nombres / rank
                 HStack(spacing: 1) {
                     ForEach(moves.numbers, id: \.self) { thatchar in
                         Button(action: {
@@ -128,9 +135,8 @@ struct MoveView: View {
                         .buttonStyle(thatStyle(color: game_controller.buttonsController.rankAllowed ? Color.blue : Color.gray))
                         .disabled(game_controller.buttonsController.rankAllowed ? false : true)
                     }
-                }.blur(radius: game_controller.isGameFinished ? 4 : 0 )
+                }.blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Rank
                 
-                // Grille des pièces majeurs
                 HStack {
                     ForEach(moves.pieces_letters, id: \.self) { thatchar in
                         Button(action: {
@@ -142,11 +148,12 @@ struct MoveView: View {
                         .buttonStyle(thatStyle(color: game_controller.buttonsController.piecesAllowed ? Color.blue : Color.gray))
                         .disabled(game_controller.buttonsController.piecesAllowed ? false : true)
                     }
-                }.blur(radius: game_controller.isGameFinished ? 4 : 0 )
+                }.blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Pieces
+                
                 Divider()
-                // Grille des actions
+                
                 HStack {
-                    VStack { // check & mate
+                    VStack {
                         ForEach(moves.check, id: \.self) { thatchar in
                             Button(action: {
                                 game_controller.add_character("+")
@@ -191,11 +198,11 @@ struct MoveView: View {
                         .disabled(game_controller.buttonsController.takeAllowed ? false : true)
                         
                     }
-                }.blur(radius: game_controller.isGameFinished ? 4 : 0 )
+                }.blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Actions
                     .disabled(game_controller.isGameFinished ? true : false)
                 
                 Divider()
-                // Bouton valider
+                
                 Button(action: {
                     game_controller.isPairComplete ? game_controller.save_move(move: Move(move: game_controller.actual_move)) : game_controller.save_pair(withMoveSaved: game_controller.coup_saved, andMove: Move(move: game_controller.actual_move))
                 }) {
@@ -206,7 +213,7 @@ struct MoveView: View {
                         .background(game_controller.isPairComplete ? Color.blue : Color.green)
                         .foregroundColor(.white)
                         .cornerRadius(10)
-                }.blur(radius: game_controller.isGameFinished ? 4 : 0 )
+                }.blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Validate button
                     .disabled(game_controller.buttonsController.moveAllowed ? false : true)
                     .blur(radius: game_controller.buttonsController.moveAllowed ? 0 : 4)
                     .padding(.top)
@@ -220,26 +227,42 @@ struct MoveView: View {
                                 .scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip list items here
                         }
                     }
-                }.scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip the list itself here
+                }.scaleEffect(x: 1, y: -1, anchor: .center) // MARK: List
                     .scrollContentBackground(.hidden)
                     .blur(radius: game_controller.isGameFinished ? 4 : 0 )
-            }
+            }  // MARK: Main window
             .disabled(game_controller.isGameFinished ? true : false)
             .zIndex(1)
             .padding()
             
             VStack(alignment: .center, spacing: 20) {
                 HStack {
-                    
                     if let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn") {
                         
                         ShareLink(item: fileURL) {
-                            Label("Share / Save", systemImage: "square.and.arrow.up")
+                            Label("Share", systemImage: "square.and.arrow.up")
                                 .font(Font.system(size: 15))
                         }.buttonStyle(actionStyle(color: Color.purple))
                             .disabled((white_name.isEmpty || black_name.isEmpty) ? true : false)
                             .blur(radius: (white_name.isEmpty || black_name.isEmpty) ? 2 : 0 )
                     }
+                    
+                    Button(action: {
+                        game_controller.newGame()
+                        white_name = ""
+                        black_name = ""
+                        white_elo = ""
+                        black_elo = ""
+                        result = ""
+                        event = ""
+                        site = ""
+                    }) {
+                        Text("Save")
+                            .font(Font.system(size: 15))
+                    }.buttonStyle(actionStyle(color: Color.purple))
+                        .disabled((white_name.isEmpty || black_name.isEmpty) ? true : false)
+                        .blur(radius: (white_name.isEmpty || black_name.isEmpty) ? 2 : 0 )
+                    
                     Button(action: {
                         game_controller.newGame()
                         white_name = ""
@@ -364,7 +387,7 @@ struct MoveView: View {
                 }.scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip the list itself here
                     .scrollContentBackground(.hidden)
                 
-            }
+            } // MARK: Result
             .onSubmit {
                 writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: game_controller.result, event: event, site: site, blackElo: black_elo, whiteElo: white_elo), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
                 if focusedField == .white_n {
@@ -451,7 +474,7 @@ struct MoveView: View {
                         .stroke(.blue, lineWidth: 3)
                 )
                 .zIndex(isResetPressed ? 3 : -1)
-            }
+            } // MARK: Reset
             
             if isDrawOffered {
                 
@@ -493,7 +516,24 @@ struct MoveView: View {
                 )
                 .frame(width: 340, height: 330)
                 .zIndex(isDrawOffered ? 3 : -1)
-            }
+            } // MARK: Draw
+            
+            if isHistoricPressed {
+                VStack {
+                    
+                }
+                .padding()
+                .buttonStyle(actionStyle(color: Color.purple))
+                .frame(width: 340, height: 630)
+                .background(Color.mint)
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(.blue, lineWidth: 3)
+                )
+                .frame(width: 340, height: 330)
+                .zIndex(isHistoricPressed ? 3 : -1)
+            } // MARK: Historic
         }
     }
 }
