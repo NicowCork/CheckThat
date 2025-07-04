@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct MoveView: View {
+    @Environment(\.modelContext) private var context
     @StateObject private var game_controller = GameController()
     @State var white_name = ""
     @State var black_name = ""
@@ -30,6 +31,20 @@ struct MoveView: View {
     @FocusState var isBlackNameFieldFocused: Bool
     
     let moves = MovesData()
+    
+    func addGame() {
+        let game = DataGame(white_name: white_name,
+                            black_name: black_name,
+                            result: game_controller.result,
+                            white_elo: white_elo,
+                            black_elo: black_elo,
+                            event: event,
+                            site: site,
+                            game: game_controller.gameToBeSaved)
+        context.insert(game)
+    }
+    
+    @Query private var dataGames: [DataGame]
     
     var body: some View {
         
@@ -74,7 +89,6 @@ struct MoveView: View {
                 Spacer(minLength: 10)
                 
                 HStack {
-                    
                     Button(action: {
                         isDrawOffered = true
                     }) {
@@ -248,6 +262,7 @@ struct MoveView: View {
                     }
                     
                     Button(action: {
+                        addGame()
                         game_controller.newGame()
                         white_name = ""
                         black_name = ""
@@ -520,7 +535,15 @@ struct MoveView: View {
             
             if isHistoricPressed {
                 VStack {
-                    
+                    List {
+                        ForEach (dataGames) { game in
+                            HStack {
+                                Text("\(game.white_name)")
+                                Text("\(game.black_name)")
+                                Text("\(game.result)")
+                            }
+                        }
+                    }
                 }
                 .padding()
                 .buttonStyle(actionStyle(color: Color.purple))
