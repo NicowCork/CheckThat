@@ -25,7 +25,6 @@ class GameController: ObservableObject {
     @Published var isGameFinished: Bool = false
     @Published var coup_saved: Move = Move(move: "...")
     @Published var buttonsController: ButtonsController = ButtonsController()
-    
     @Published var result: String = ""
     
     var gameToBeSaved: String = ""
@@ -37,7 +36,6 @@ class GameController: ObservableObject {
             actual_move.append(character)
         }
     }
-    
     func remove_last() {
         if actual_move == "..." {
             playSound(sound: "Pouet", type: "mp3")
@@ -47,7 +45,6 @@ class GameController: ObservableObject {
             actual_move.removeLast()
         }
     }
-    
     func save_pair(withMoveSaved: Move, andMove move: Move) {
         let pairId: Int = game.count_moves + 1
         game.pair_Moves.append(PairMove(id_: pairId, move_one: coup_saved, move_two: move))
@@ -66,7 +63,6 @@ class GameController: ObservableObject {
             isPairComplete = true
         }
     }
-    
     func save_move(move: Move) {
         if actual_move.last == "#" {
             coup_saved = move
@@ -77,7 +73,6 @@ class GameController: ObservableObject {
             isPairComplete = false
         }
     }
-    
     func newGame() {
         actual_move = "..."
         result = ""

@@ -49,6 +49,16 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = false
             promoAllowed = false
+        } else if input.last == "x" {
+            takeAllowed = false
+            checkAllowed = false
+            rankAllowed = false
+            fileAllowed = true
+            piecesAllowed = false
+            moveAllowed = false
+            rockAllowed = false
+            mateAllowed = false
+            promoAllowed = false
         } else if input.matches(movesRegexes.pawn.rawValue) { // a
             takeAllowed = true
             checkAllowed = false
@@ -69,7 +79,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = false
             promoAllowed = false
-        } else if input.matches(movesRegexes.piece_file.rawValue) { // Nc file en litige
+        } else if input.matches(movesRegexes.piece_file.rawValue) { // Nc
             takeAllowed = true
             checkAllowed = false
             rankAllowed = true
@@ -159,17 +169,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = true
             promoAllowed = true
-        } else if input.matches(movesRegexes.piece_taking.rawValue) { // ex & Nx
-            takeAllowed = false
-            checkAllowed = false
-            rankAllowed = false
-            fileAllowed = true
-            piecesAllowed = false
-            moveAllowed = false
-            rockAllowed = false
-            mateAllowed = false
-            promoAllowed = false
-        } else if input.matches(movesRegexes.piece_taking_file.rawValue) { // exf & Nxf
+        } else if input.matches(movesRegexes.piece_taking_file.rawValue) { // Nxf
             takeAllowed = false
             checkAllowed = false
             rankAllowed = true
@@ -179,7 +179,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = false
             promoAllowed = false
-        } else if input.matches(movesRegexes.pawn_taking_file_rank.rawValue) { // exf4 & Nxf4
+        } else if input.matches(movesRegexes.pawn_taking_file_rank.rawValue) { // exf4
             takeAllowed = false
             checkAllowed = true
             rankAllowed = false
@@ -189,7 +189,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = true
             promoAllowed = true
-        } else if input.matches(movesRegexes.piece_taking_file_rank.rawValue) {
+        } else if input.matches(movesRegexes.piece_taking_file_rank.rawValue) { // Nxf4
             takeAllowed = false
             checkAllowed = true
             rankAllowed = false
@@ -199,7 +199,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = true
             promoAllowed = false
-        } else if input.matches(movesRegexes.all_rocks.rawValue) { // O-O-O
+        } else if input.matches(movesRegexes.all_rocks.rawValue) { // O-O-O O-O
             takeAllowed = false
             checkAllowed = true
             rankAllowed = false
@@ -209,7 +209,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = true
             promoAllowed = false
-        } else if input.matches(movesRegexes.piece_rank_file_rank.rawValue) { // O-O-O
+        } else if input.matches(movesRegexes.piece_rank_file_rank.rawValue) { // F4c4
             takeAllowed = false
             checkAllowed = true
             rankAllowed = false
@@ -219,7 +219,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = true
             promoAllowed = false
-        } else if input.matches(movesRegexes.pawn_rank_prom.rawValue) { // O-O-O
+        } else if input.matches(movesRegexes.pawn_rank_prom.rawValue) { // c4=
             takeAllowed = false
             checkAllowed = false
             rankAllowed = false
@@ -229,7 +229,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = false
             promoAllowed = false
-        } else if input.matches(movesRegexes.pawn_rank_prom_done.rawValue) { // O-O-O
+        } else if input.matches(movesRegexes.pawn_rank_prom_done.rawValue) { // c8=Q
             takeAllowed = false
             checkAllowed = true
             rankAllowed = false
@@ -239,7 +239,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = true
             promoAllowed = false
-        } else if input.matches(movesRegexes.pawn_take_file_rank_prom.rawValue) { // O-O-O
+        } else if input.matches(movesRegexes.pawn_take_file_rank_prom.rawValue) { // cxd4=
             takeAllowed = false
             checkAllowed = false
             rankAllowed = false
@@ -249,7 +249,7 @@ struct ButtonsController {
             rockAllowed = false
             mateAllowed = false
             promoAllowed = false
-        } else if input.matches(movesRegexes.pawn_take_file_rank_prom_done.rawValue) { // O-O-O
+        } else if input.matches(movesRegexes.pawn_take_file_rank_prom_done.rawValue) { // cxd4=Q
             takeAllowed = false
             checkAllowed = true
             rankAllowed = false
@@ -265,24 +265,23 @@ struct ButtonsController {
 
 enum movesRegexes: String {
     case pawn = "^[a-h]$" // début d'un pion
-    case piece = "^[KQRBN]$" // début d'une pièce
-    case piece_file = "^[KQRBN][a-h]$" // pièce + colonne
-    case piece_file_file = "^[KQRBN][a-h][a-h]$" // pièce + colonne + colonne
-    case piece_file_file_rank = "^[KQRBN][a-h][a-h][1-8]$" // pièce + colonne + colonne
     case pawn_rank = "^[a-h][1-8]$" // pion mouvement simple
     case pawn_rank_prom = "^[a-h][1-8]=$"
     case pawn_rank_prom_done = "^[a-h][1-8]=[KGRBN]$"
     case pawn_take_file_rank_prom = "^[a-h]x[a-h][1-8]=$"
     case pawn_take_file_rank_prom_done = "^[a-h]x[a-h][1-8]=[KGRBN]$"
+    case pawn_taking_file_rank = "^[a-h]x[a-h][1-8]$" // pawn capture  complète
+    case piece = "^[KQRBN]$" // début d'une pièce
+    case piece_file = "^[KQRBN][a-h]$" // pièce + colonne
+    case piece_file_file = "^[KQRBN][a-h][a-h]$" // pièce + colonne + colonne
+    case piece_file_file_rank = "^[KQRBN][a-h][a-h][1-8]$" // pièce + colonne + colonne
     case piece_file_rank = "^[KQRBN][a-h][1-8]$" // pièce + colonne + ligne
     case piece_rank = "^[KQRBN][1-8]$" // pion mouvement simple
     case piece_file_rank_file = "^[KQRBN][a-h][1-8][a-h]$"
     case piece_rank_file = "^[KQRBN][1-8][a-h]$" // pion mouvement simple
     case piece_rank_file_rank = "^[KQRBN][1-8][a-h][1-8]$" // pion mouvement simple
     case piece_file_rank_file_rank = "^[KQRBN][a-h][1-8][a-h][1-8]$"
-    case piece_taking = "^([KQRBN]|[KQRBN][1-8]|[KQRBN][a-h]|[KQRBN][a-h][1-8]|[a-h])x$" // pièce qui va capturer
     case piece_taking_file = "^([a-h]|[KQRBN]|[KQRBN][1-8]|[KQRBN][a-h]|[KQRBN][a-h][1-8])x[a-h]$" // piece capture colonne
     case piece_taking_file_rank = "^([KQRBN]|[KQRBN][1-8]|[KQRBN][a-h]|[KQRBN][a-h][1-8])x[a-h][1-8]$" // piece capture complète
-    case pawn_taking_file_rank = "^[a-h]x[a-h][1-8]$" // pawn capture  complète
     case all_rocks = "^O-O(-O)?$" // rocks
 }

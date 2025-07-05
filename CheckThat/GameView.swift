@@ -22,17 +22,14 @@ struct MoveView: View {
     @State var isResetPressed: Bool = false
     @State var isHistoricPressed: Bool = false
     @State var isSavePressed: Bool = false
-    @State var scale: CGFloat = 1.0
-    
-    enum Field {
-        case white_n, black_n, white_e, black_e, event, site
-    }
+    @Query private var dataGames: [DataGame]
     @FocusState private var focusedField: Field?
     @FocusState var isWhiteNameFieldFocused: Bool
     @FocusState var isBlackNameFieldFocused: Bool
     
     let moves = MovesData()
-        
+    enum Field { case white_n, black_n, white_e, black_e, event, site }
+    
     func resetResult() {
         white_name = ""
         black_name = ""
@@ -42,7 +39,6 @@ struct MoveView: View {
         event = ""
         site = ""
     }
-    
     func addGame() {
         let game = DataGame(white_name: white_name,
                             black_name: black_name,
@@ -55,8 +51,6 @@ struct MoveView: View {
                             game: game_controller.gameToBeSaved)
         context.insert(game)
     }
-    
-    @Query private var dataGames: [DataGame]
     
     var body: some View {
         
@@ -88,7 +82,7 @@ struct MoveView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     .blur(radius: (game_controller.isGameFinished || isResetPressed) ? 4 : 0 )
                     .opacity(isHistoricPressed ? 0 : 1)
-
+                    
                     Spacer(minLength: 30)
                     
                     Button(action: {
@@ -127,7 +121,8 @@ struct MoveView: View {
                         Text("RESET")
                             .font(Font.system(size: 22))
                         
-                    }.buttonStyle(actionStyle(color: Color.mint))
+                    }
+                    .buttonStyle(actionStyle(color: Color.mint))
                     .blur(radius: (game_controller.isGameFinished || isResetPressed) ? 4 : 0)
                     
                     Button (action: {
@@ -139,7 +134,8 @@ struct MoveView: View {
                     }) {
                         Text("DEL")
                             .font(Font.system(size: 22))
-                    }.buttonStyle(actionStyle(color: Color.mint))
+                    }
+                    .buttonStyle(actionStyle(color: Color.mint))
                     .blur(radius: (game_controller.isGameFinished || isResetPressed) ? 4 : 0 )
                     .disabled(game_controller.isGameFinished ? true : false)
                 } // MARK: Draw, Reset & DEL
@@ -156,7 +152,8 @@ struct MoveView: View {
                         .buttonStyle(thatStyle(color: game_controller.buttonsController.fileAllowed ? Color.blue : Color.gray))
                         .disabled(game_controller.buttonsController.fileAllowed ? false : true)
                     }
-                }.blur(radius: isResetPressed ? 4 : 0)
+                }
+                .blur(radius: isResetPressed ? 4 : 0)
                 .blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Pawns/files
                 
                 HStack(spacing: 1) {
@@ -170,9 +167,10 @@ struct MoveView: View {
                         .buttonStyle(thatStyle(color: game_controller.buttonsController.rankAllowed ? Color.blue : Color.gray))
                         .disabled(game_controller.buttonsController.rankAllowed ? false : true)
                     }
-                }.blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Rank
+                }
+                .blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Rank
                 .blur(radius: isResetPressed ? 4 : 0)
-
+                
                 HStack {
                     ForEach(moves.pieces_letters, id: \.self) { thatchar in
                         Button(action: {
@@ -184,7 +182,8 @@ struct MoveView: View {
                         .buttonStyle(thatStyle(color: game_controller.buttonsController.piecesAllowed ? Color.blue : Color.gray))
                         .disabled(game_controller.buttonsController.piecesAllowed ? false : true)
                     }
-                }.blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Pieces
+                }
+                .blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Pieces
                 HStack(spacing: 10) {
                     ForEach(moves.footprints_pieces, id: \.self) { footprint in
                         Text(footprint)
@@ -254,7 +253,8 @@ struct MoveView: View {
                         .disabled(game_controller.buttonsController.takeAllowed ? false : true)
                         
                     }
-                }.blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Actions
+                }
+                .blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Actions
                 .disabled((game_controller.isGameFinished || isHistoricPressed) ? true : false)
                 
                 Divider()
@@ -269,7 +269,8 @@ struct MoveView: View {
                         .background(game_controller.isPairComplete ? Color.blue : Color.green)
                         .foregroundColor(.white)
                         .cornerRadius(10)
-                }.blur(radius: (game_controller.isGameFinished || isResetPressed || !game_controller.buttonsController.moveAllowed) ? 4 : 0 ) // MARK: Validate button
+                }
+                .blur(radius: (game_controller.isGameFinished || isResetPressed || !game_controller.buttonsController.moveAllowed) ? 4 : 0 ) // MARK: Validate button
                 .disabled(game_controller.buttonsController.moveAllowed ? false : true)
                 .padding(.top)
                 
@@ -285,20 +286,8 @@ struct MoveView: View {
                             .cornerRadius(4)
                         Spacer()
                     }
-                }.opacity(isHistoricPressed ? 0 : 1)
-                
-//                List {
-//                    ForEach(game_controller.game.pair_Moves) { pair_move in
-//                        HStack {
-//                            Text("\(pair_move.id_). \(pair_move.move_one.move) : \(pair_move.move_two.move)")
-//                                .scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip list items here
-//                        }
-//                    }
-//                }
-//                .scaleEffect(x: 1, y: -1, anchor: .center) // MARK: List
-//                .scrollContentBackground(.hidden)
-//                .blur(radius: game_controller.isGameFinished ? 4 : 0 )
-                
+                }
+                .opacity(isHistoricPressed ? 0 : 1)
             }  // MARK: Main window
             .disabled((game_controller.isGameFinished || isResetPressed) ? true : false)
             .blur(radius: game_controller.isGameFinished ? 4 : 0 )
@@ -312,9 +301,10 @@ struct MoveView: View {
                         ShareLink(item: fileURL) {
                             Label("Share", systemImage: "square.and.arrow.up")
                                 .font(Font.system(size: 15))
-                        }.buttonStyle(actionStyle(color: Color.purple))
-                            .disabled((white_name.isEmpty || black_name.isEmpty) ? true : false)
-                            .blur(radius: (white_name.isEmpty || black_name.isEmpty) ? 2 : 0 )
+                        }
+                        .buttonStyle(actionStyle(color: Color.purple))
+                        .disabled((white_name.isEmpty || black_name.isEmpty) ? true : false)
+                        .blur(radius: (white_name.isEmpty || black_name.isEmpty) ? 2 : 0 )
                     }
                     
                     Button(action: {
@@ -323,9 +313,10 @@ struct MoveView: View {
                     }) {
                         Text("Save")
                             .font(Font.system(size: 15))
-                    }.buttonStyle(actionStyle(color: Color.purple))
-                        .disabled((white_name.isEmpty || black_name.isEmpty || isSavePressed) ? true : false)
-                        .blur(radius: (white_name.isEmpty || black_name.isEmpty || isSavePressed) ? 2 : 0 )
+                    }
+                    .buttonStyle(actionStyle(color: Color.purple))
+                    .disabled((white_name.isEmpty || black_name.isEmpty || isSavePressed) ? true : false)
+                    .blur(radius: (white_name.isEmpty || black_name.isEmpty || isSavePressed) ? 2 : 0 )
                     
                     Button(action: {
                         game_controller.newGame()
@@ -335,7 +326,8 @@ struct MoveView: View {
                         Text("NEW GAME")
                             .font(Font.system(size: 15))
                         
-                    }.buttonStyle(actionStyle(color: Color.purple))
+                    }
+                    .buttonStyle(actionStyle(color: Color.purple))
                 }
                 
                 HStack {
@@ -344,7 +336,6 @@ struct MoveView: View {
                         .focused($focusedField, equals: .white_n)
                         .focused($isWhiteNameFieldFocused)
                 }
-
                 .padding(5)
                 .background()
                 .cornerRadius(20)
@@ -445,7 +436,7 @@ struct MoveView: View {
                     }
                     .buttonStyle(actionStyle(color: Color.purple))
                 }
-            
+                
                 List {
                     ForEach(game_controller.game.pair_Moves) { pair_move in
                         HStack {
@@ -453,8 +444,9 @@ struct MoveView: View {
                                 .scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip list items here
                         }
                     }
-                }.scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip the list itself here
-                    .scrollContentBackground(.hidden)
+                }
+                .scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip the list itself here
+                .scrollContentBackground(.hidden)
                 
             } // MARK: Result
             .onSubmit {
@@ -464,7 +456,32 @@ struct MoveView: View {
                 } else {
                     UIApplication.shared.dismissKeyboard()
                 }
-                
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: game_controller.result, event: event, site: site, blackElo: black_elo, whiteElo: white_elo, date: game_controller.game.game_date), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
+                        if focusedField == .white_n {
+                            focusedField = .black_n
+                        }
+                        if focusedField == .black_n {
+                            focusedField = .white_e
+                        }
+                        if focusedField == .white_e {
+                            focusedField = .black_e
+                        }
+                        if focusedField == .black_e {
+                            focusedField = .event
+                        }
+                        if focusedField == .event {
+                            focusedField = .site
+                        }
+                        if focusedField == .site {
+                            UIApplication.shared.dismissKeyboard()
+                        }
+                    }
+                }
             }
             .submitLabel(.done)
             .autocorrectionDisabled()
@@ -479,32 +496,6 @@ struct MoveView: View {
             .zIndex(game_controller.isGameFinished ? 2 : 0)
             .opacity(game_controller.isGameFinished ? 2 : 0)
             .offset(y: isWhiteNameFieldFocused ? 40 : 0)
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard){
-                     Spacer()
-                     Button("Done") {
-                         writeTextToFile(text: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: game_controller.result, event: event, site: site, blackElo: black_elo, whiteElo: white_elo, date: game_controller.game.game_date), fileName: "Your chess Game - \(game_controller.game.game_date.formatted(date: .abbreviated, time: .standard)).pgn")
-                         if focusedField == .white_n {
-                             focusedField = .black_n
-                         }
-                         if focusedField == .black_n {
-                             focusedField = .white_e
-                         }
-                         if focusedField == .white_e {
-                             focusedField = .black_e
-                         }
-                         if focusedField == .black_e {
-                             focusedField = .event
-                         }
-                         if focusedField == .event {
-                             focusedField = .site
-                         }
-                         if focusedField == .site {
-                             UIApplication.shared.dismissKeyboard()
-                         }
-                      }
-                  }
-              }
             
             if isResetPressed {
                 VStack {
@@ -592,28 +583,26 @@ struct MoveView: View {
             } // MARK: Draw
             
             if isHistoricPressed {
-
                 VStack {
                     List {
-                        ForEach (dataGames) { game in
+                        ForEach (dataGames, id: \.self) { game in
                             HStack {
                                 VStack(alignment: .leading) {
                                     Text("\(game.white_name)")
                                         .bold()
                                         .font(Font.system(size: 20))
                                     Text("\(game.white_elo)")
-                                        .offset(x: 30)
+                                        .offset(x: 22)
                                         .italic()
                                     Text("\(game.black_elo)")
-                                        .offset(x: 30)
+                                        .offset(x: 22)
                                         .italic()
-
                                     Text("\(game.black_name)")
                                         .bold()
                                         .font(Font.system(size: 20))
                                 }
                                 Spacer(minLength: 50)
-                                VStack() {
+                                VStack {
                                     if game.result == "1/2-1/2" {
                                         Text("1/2")
                                         Text("-")
@@ -630,15 +619,25 @@ struct MoveView: View {
                                 }
                                 .bold()
                                 .font(Font.system(size: 25))
-                                VStack {
-                                    Text("\(game.date.formatted())")
+                                
+                                VStack(spacing: -10) {
+                                    Text("\(game.date.formatted(date: .numeric, time: .omitted))")
+                                    
                                     if let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Chess Game - \(game.date.formatted(date: .abbreviated, time: .standard)).pgn") {
                                         
                                         ShareLink(item: fileURL) {
                                             Label("Share", systemImage: "square.and.arrow.up")
                                                 .font(Font.system(size: 7))
                                         }
+                                        .frame(width: 100, height: 55)
                                     }
+                                    Button(action:  {
+                                        context.delete(game)
+                                    }) {
+                                        Label("Delete", systemImage: "trash")
+                                            .font(Font.system(size: 7))
+                                    }
+                                    .frame(width: 100, height: 25)
                                 }
                                 .frame(width: 100)
                             }
