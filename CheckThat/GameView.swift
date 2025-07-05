@@ -280,9 +280,9 @@ struct MoveView: View {
                         Text("Last Move:        \(game_controller.game.pair_Moves.last?.id_ ?? 0). \(game_controller.game.pair_Moves.last?.move_one.move ?? "...") : \(game_controller.game.pair_Moves.last?.move_two.move ?? "...")")
                             .italic()
                             .font(Font.system(size: 23))
-                            .background(Color.mint)
+                            .background(Color.blue)
                             .foregroundColor(Color.black)
-                            .cornerRadius(5)
+                            .cornerRadius(4)
                         Spacer()
                     }
                 }.opacity(isHistoricPressed ? 0 : 1)
