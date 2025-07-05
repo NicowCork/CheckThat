@@ -285,7 +285,7 @@ struct MoveView: View {
                             .cornerRadius(5)
                         Spacer()
                     }
-                }
+                }.opacity(isHistoricPressed ? 0 : 1)
                 
 //                List {
 //                    ForEach(game_controller.game.pair_Moves) { pair_move in
