@@ -49,7 +49,7 @@ class GameController: ObservableObject {
     }
     
     func save_pair(withMoveSaved: Move, andMove move: Move) {
-        let pairId: Int = game.id_ + 1
+        let pairId: Int = game.count_moves + 1
         game.pair_Moves.append(PairMove(id_: pairId, move_one: coup_saved, move_two: move))
         
         if game.pair_Moves.last?.move_one.move.last == "#" {
@@ -61,7 +61,7 @@ class GameController: ObservableObject {
         if actual_move.last == "#" {
             isGameFinished = true
         } else {
-            game.id_ += 1
+            game.count_moves += 1
             actual_move = "..."
             isPairComplete = true
         }
@@ -87,12 +87,13 @@ class GameController: ObservableObject {
         self.coup_saved = Move(move: "...")
     }
     
-    func getPGNContent(forWhite white: String, andBlack black : String, result: String, event: String?, site: String?, blackElo: String?, whiteElo: String?) -> String {
+    func getPGNContent(forWhite white: String, andBlack black : String, result: String, event: String?, site: String?, blackElo: String?, whiteElo: String?, date: Date) -> String {
         var pgn_moves = ""
         for moves in game.pair_Moves {
             let move = "\(moves.id_).\(moves.move_one.move) \(moves.move_two.move)"
-            pgn_moves += " \(move)"
+            pgn_moves += "\(move) "
         }
+        
         let pgnString = """
             [White "\(white)"]
             [Black "\(black)"]
@@ -100,6 +101,7 @@ class GameController: ObservableObject {
             [BlackElo "\(blackElo ?? "N/A")"]
             [Event "\(event ?? "N/A")"]
             [Site "\(site ?? "N/A")"]
+            [Date "\(date.formatted())"]
             [Result "\(result)"]
             
             \(pgn_moves)\(self.result)

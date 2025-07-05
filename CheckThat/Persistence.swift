@@ -18,9 +18,10 @@ class DataGame: Identifiable {
     var black_elo: String
     var event: String
     var site: String
+    var date: Date
     var game: String
 
-    init(white_name: String, black_name: String, result: String, white_elo: String, black_elo: String, event: String, site: String, game: String) {
+    init(white_name: String, black_name: String, result: String, white_elo: String, black_elo: String, event: String, site: String, date: Date, game: String) {
         self.id = UUID().uuidString
         self.white_name = white_name
         self.black_name = black_name
@@ -29,6 +30,7 @@ class DataGame: Identifiable {
         self.black_elo = black_elo
         self.event = event
         self.site = site
+        self.date = date
         self.game = game
     }
 }
