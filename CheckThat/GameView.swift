@@ -283,20 +283,18 @@ struct MoveView: View {
     private var last_move: some View {
         HStack {
             if game_controller.game.count_moves != 0 {
-                Text("Last Move:        \(game_controller.game.pair_Moves.last?.id_ ?? 0). \(game_controller.game.pair_Moves.last?.move_one.move ?? "...") : \(game_controller.game.pair_Moves.last?.move_two.move ?? "...")")
-                    .italic()
-                    .font(Font.system(size: 23))
+                Text("\(game_controller.game.pair_Moves.last?.id_ ?? 0). \(game_controller.game.pair_Moves.last?.move_one.move ?? "...") : \(game_controller.game.pair_Moves.last?.move_two.move ?? "...")")
+                    .font(Font.system(size: 26))
                     .background(Color.blue)
-                    .foregroundColor(Color.black)
-                    .cornerRadius(4)
+                    .foregroundColor(Color.white)
+                    .cornerRadius(8)
                 Spacer()
             } else {
-                Text("Last Move:        1. ... : ...")
-                    .italic()
-                    .font(Font.system(size: 23))
+                Text("1. ... : ...")
+                    .font(Font.system(size: 26))
                     .background(Color.blue)
-                    .foregroundColor(Color.black)
-                    .cornerRadius(4)
+                    .foregroundColor(Color.white)
+                    .cornerRadius(8)
                 Spacer()
             }
         }
@@ -612,17 +610,13 @@ struct MoveView: View {
             ZStack {
                 VStack(spacing: 17) {
                     score_historic
-                    Spacer(minLength: 10)
                     top_button
-                    Spacer()
-                    Divider()
+                    Spacer(minLength: 20)
                     main_buttons
                     Divider()
                     actions
-                    Divider()
+                    Spacer(minLength: 20)
                     valid
-                    Spacer()
-                    last_move
                 }
                 .disabled((game_controller.isGameFinished || isResetPressed) ? true : false)
                 .blur(radius: game_controller.isGameFinished ? 4 : 0 )
@@ -704,11 +698,12 @@ struct MoveView: View {
                         score_historic
                         top_button
                         valid
-                        last_move
-                    }.disabled((game_controller.isGameFinished || isResetPressed) ? true : false)
-                        .blur(radius: game_controller.isGameFinished ? 4 : 0 )
-                        .zIndex(1)
-                        .padding()
+                        Spacer()
+                    }
+                    .disabled((game_controller.isGameFinished || isResetPressed) ? true : false)
+                    .blur(radius: game_controller.isGameFinished ? 4 : 0 )
+                    .zIndex(1)
+                    .padding()
                 }
                 
                 HStack(alignment: .center, spacing: 20) {
