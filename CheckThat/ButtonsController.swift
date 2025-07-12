@@ -267,7 +267,7 @@ enum movesRegexes: String {
     case pawn = "^[a-h]$" // début d'un pion
     case pawn_rank = "^[a-h][1-8]$" // pion mouvement simple
     case pawn_rank_prom = "^[a-h][1-8]=$"
-    case pawn_rank_prom_done = "^[a-h][1-8]=[KGRBN]$"
+    case pawn_rank_prom_done = "^[a-h][1-8]=[QRBN]$"
     case pawn_take_file_rank_prom = "^[a-h]x[a-h][1-8]=$"
     case pawn_take_file_rank_prom_done = "^[a-h]x[a-h][1-8]=[KGRBN]$"
     case pawn_taking_file_rank = "^[a-h]x[a-h][1-8]$" // pawn capture  complète

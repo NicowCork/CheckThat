@@ -30,7 +30,9 @@ class GameController: ObservableObject {
     var gameToBeSaved: String = ""
     
     func add_character(_ character: String) {
-        if actual_move == "..." {
+        if actual_move.last == "=" && character == "K" {
+            playSound(sound: "Pouet", type: ".mp3")
+        } else if actual_move == "..." {
             actual_move = character
         } else {
             actual_move.append(character)
