@@ -22,12 +22,12 @@ struct MoveView: View {
     @State private var result = ""
     @State private var event = ""
     @State private var site = ""
-    @State private var isMenuPressed: Bool = false
     @State private var isDrawOffered: Bool = false
     @State private var isResetPressed: Bool = false
     @State private var isHistoricPressed: Bool = false
     @State private var isSavePressed: Bool = false
-    @State private var currentIndex: Int = 0
+    @State private var isDeletePressed: Bool = false
+    @State private var confirmingDeletion: DataGame? = nil
     
     @FocusState private var focusedField: Field?
     @FocusState private var isWhiteNameFieldFocused: Bool
@@ -58,36 +58,39 @@ struct MoveView: View {
         context.insert(game)
     }
     
-    private var menu : some View {
+    private var menu_buttons : some View {
         HStack {
-            if isHistoricPressed {
-                Button(action: {
-                    isHistoricPressed.toggle()
-                }) {
-                    Text("HIDE HISTORIC")
-                }
-                .padding(5)
-                .font(.system(size: 28, weight: .bold))
-                .background(Color.blue)
-                .foregroundColor(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-            Spacer()
             Button(action: {
-                isMenuPressed.toggle()
+                isResetPressed.toggle()
             }) {
-                Text("\(isMenuPressed ? "LIVE GAME" : "MENU")")
+                Text("RESET")
             }
             .padding(5)
-            .font(.system(size: 28, weight: .bold))
-            .background(isMenuPressed ? Color.blue : Color.gray)
+            .font(.system(size: 20, weight: .bold))
+            .background(isResetPressed ? Color.blue : Color.gray)
             .foregroundColor(.white)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .disabled(isHistoricPressed ? true : false)
             .opacity(isHistoricPressed ? 0 : 1)
+            
+            Button(action: {
+                isHistoricPressed.toggle()
+            }) {
+                Text("HISTORIC")
+            }
+            .padding(5)
+            .font(.system(size: 20, weight: .bold))
+            .background(isHistoricPressed ? Color.blue : Color.gray)
+            .foregroundColor(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .disabled((isResetPressed || verticalSizeClass == .compact) ? true : false)
+            .opacity(verticalSizeClass == .compact ? 0 : 1)
+            .blur(radius: isResetPressed ? 4 : 0)
+            
+            Spacer()
         }
     }
-    private var score : some View {
+    private var score_view : some View {
         HStack {
             HStack  {
                 Text("\(game_controller.game.count_moves == 0 ? "1" : "\(game_controller.game.count_moves + 1)").")
@@ -129,7 +132,7 @@ struct MoveView: View {
             Spacer()
         }
     }
-    private var top_button : some View {
+    private var top_buttons : some View {
         HStack {
             Button(action: {
                 withAnimation(.easeInOut(duration: 0.4)) {
@@ -295,7 +298,7 @@ struct MoveView: View {
                 .cornerRadius(10)
         }
         .blur(radius: (game_controller.isGameFinished || isResetPressed || !game_controller.buttonsController.moveAllowed) ? 4 : 0 )
-        .opacity((isHistoricPressed || isMenuPressed) ? 0 : 1)
+        .opacity(isHistoricPressed ? 0 : 1)
         .disabled(game_controller.buttonsController.moveAllowed ? false : true)
         .padding(.top)
     }
@@ -469,7 +472,7 @@ struct MoveView: View {
         .scrollContentBackground(.hidden)
     }
     
-    private var menu_pressed: some View {
+    private var menu_view: some View {
         VStack(alignment: .center) {
             Text("MENU")
                 .padding(5)
@@ -495,21 +498,19 @@ struct MoveView: View {
         .padding()
         .buttonStyle(actionStyle(color: Color.accentColor))
         .frame(width: 250, height: 200)
-        .zIndex(isMenuPressed ? 3 : -5)
         .background(Color.mint)
         .cornerRadius(20)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(.black, lineWidth: 3)
         )
-        .opacity((isResetPressed && isMenuPressed) ? 0 : 1)
+        .opacity(isResetPressed ? 0 : 1)
     }
-    private var reset_pressed: some View {
+    private var reset_view: some View {
         VStack {
             Text("Are you sure you want to reset the game?")
                 .font(Font.system(size: 35))
                 .bold()
-                .foregroundStyle(Color.purple)
                 .multilineTextAlignment(.center)
             
             Spacer()
@@ -519,7 +520,6 @@ struct MoveView: View {
                     game_controller.newGame()
                     withAnimation(.easeInOut(duration: 0.4)) {
                         isResetPressed = false
-                        isMenuPressed.toggle()
                     }
                 }) {
                     Text("Yes")
@@ -537,7 +537,7 @@ struct MoveView: View {
             }
         }
         .padding()
-        .buttonStyle(actionStyle(color: Color.purple))
+        .buttonStyle(actionStyle(color: Color.blue))
         .frame(width: 340, height: 230)
         .background(Color.mint)
         .cornerRadius(20)
@@ -547,7 +547,7 @@ struct MoveView: View {
         )
         .zIndex(isResetPressed ? 4 : -1)
     }
-    private var draw_pressed: some View {
+    private var draw_view: some View {
         VStack {
             Text("Are you sure you want to draw the game?")
                 .font(Font.system(size: 35))
@@ -587,66 +587,16 @@ struct MoveView: View {
         .frame(width: 340, height: 330)
         .zIndex(isDrawOffered ? 3 : -1)
     }
-    private var historic_pressed: some View {
+    private var historic_view: some View {
         VStack {
             List {
                 ForEach (dataGames, id: \.self) { game in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("\(game.white_name)")
-                                .bold()
-                                .font(Font.system(size: 20))
-                            Text("\(game.white_elo)")
-                                .offset(x: 22)
-                                .italic()
-                            Text("\(game.black_elo)")
-                                .offset(x: 22)
-                                .italic()
-                            Text("\(game.black_name)")
-                                .bold()
-                                .font(Font.system(size: 20))
+                    GameHistoric(game: game, isConfirming: Binding(
+                        get: { confirmingDeletion == game },
+                        set: { isConfirming in
+                            confirmingDeletion = isConfirming ? game : nil
                         }
-                        Spacer(minLength: 50)
-                        VStack {
-                            if game.result == "1/2-1/2" {
-                                Text("1/2")
-                                Text("-")
-                                Text("1/2")
-                            } else if game.result == "1-0" {
-                                Text("1")
-                                Text("-")
-                                Text("0")
-                            } else if game.result == "0-1" {
-                                Text("0")
-                                Text("-")
-                                Text("1")
-                            }
-                        }
-                        .bold()
-                        .font(Font.system(size: 25))
-                        
-                        VStack(spacing: -10) {
-                            Text("\(game.date.formatted(date: .numeric, time: .omitted))")
-                            
-                            if let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Chess Game - \(game.date.formatted(date: .abbreviated, time: .standard)).pgn") {
-                                
-                                ShareLink(item: fileURL) {
-                                    Label("Share", systemImage: "square.and.arrow.up")
-                                        .font(Font.system(size: 7))
-                                }
-                                .frame(width: 100, height: 55)
-                            }
-                            Button(action:  {
-                                context.delete(game)
-                            }) {
-                                Label("Delete", systemImage: "trash")
-                                    .font(Font.system(size: 7))
-                            }
-                            .frame(width: 100, height: 25)
-                        }
-                        .frame(width: 100)
-                    }
-                    .cornerRadius(5)
+                    ))
                 }
                 .listRowBackground(Color.clear)
             }
@@ -664,11 +614,11 @@ struct MoveView: View {
         if verticalSizeClass == .regular { // portrait
             ZStack {
                 VStack(spacing: 17) {
-                    menu
+                    menu_buttons
                     Group {
-                        score
+                        score_view
                         Spacer(minLength: 20)
-                        top_button
+                        top_buttons
                         Divider()
                         main_buttons
                         Divider()
@@ -676,8 +626,8 @@ struct MoveView: View {
                         Spacer(minLength: 20)
                         valid
                     }
-                    .disabled((game_controller.isGameFinished || isResetPressed || isMenuPressed) ? true : false)
-                    .blur(radius: (game_controller.isGameFinished || isMenuPressed) ? 7 : 0 )
+                    .disabled((game_controller.isGameFinished || isResetPressed) ? true : false)
+                    .blur(radius: (game_controller.isGameFinished || isResetPressed) ? 7 : 0 )
                 }
                 .zIndex(1)
                 .padding()
@@ -734,14 +684,12 @@ struct MoveView: View {
                 .zIndex(game_controller.isGameFinished ? 2 : 0)
                 .opacity(game_controller.isGameFinished ? 2 : 0)
                 .offset(y: isWhiteNameFieldFocused ? 40 : 0)
+                                
+                if isResetPressed { reset_view }
                 
-                if isMenuPressed { menu_pressed }
+                if isDrawOffered { draw_view }
                 
-                if isResetPressed { reset_pressed }
-                
-                if isDrawOffered { draw_pressed }
-                
-                if isHistoricPressed { historic_pressed }
+                if isHistoricPressed { historic_view }
             }
         } else if verticalSizeClass == .compact { // landscape
             ZStack {
@@ -756,10 +704,10 @@ struct MoveView: View {
                         .padding()
                     
                     VStack {
-                        menu
-                        score
+                        menu_buttons
+                        score_view
                         Spacer()
-                        top_button
+                        top_buttons
                         valid
                     }
                     .disabled((game_controller.isGameFinished || isResetPressed) ? true : false)
@@ -825,9 +773,9 @@ struct MoveView: View {
                 .offset(y: (verticalSizeClass == .compact && isWhiteNameFieldFocused) ? 70 : 0)
                 .offset(y: (verticalSizeClass == .compact && isBlackNameFieldFocused) ? 40 : 0)
                 
-                if isResetPressed { reset_pressed }
+                if isResetPressed { reset_view }
                 
-                if isDrawOffered { draw_pressed }
+                if isDrawOffered { draw_view }
             }
         }
     }
