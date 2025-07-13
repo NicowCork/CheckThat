@@ -70,8 +70,8 @@ struct MoveView: View {
             .background(isResetPressed ? Color.blue : Color.gray)
             .foregroundColor(.white)
             .clipShape(RoundedRectangle(cornerRadius: 10))
-            .disabled(isHistoricPressed ? true : false)
-            .opacity(isHistoricPressed ? 0 : 1)
+            .disabled((isHistoricPressed  || game_controller.isGameFinished) ? true : false)
+            .opacity((isHistoricPressed || game_controller.isGameFinished) ? 0 : 1)
             
             Button(action: {
                 isHistoricPressed.toggle()
@@ -141,6 +141,7 @@ struct MoveView: View {
             }) {
                 Text("DRAW")
                     .font(Font.system(size: 22))
+                    .bold()
             }
             .buttonStyle(actionStyle(color: Color.blue))
             .blur(radius: game_controller.game.count_moves <= 2 ? 4 : 0)
@@ -331,7 +332,6 @@ struct MoveView: View {
                     Label("Share", systemImage: "square.and.arrow.up")
                         .font(Font.system(size: 15))
                 }
-                .buttonStyle(actionStyle(color: Color.purple))
                 .disabled((white_name.isEmpty || black_name.isEmpty) ? true : false)
                 .blur(radius: (white_name.isEmpty || black_name.isEmpty) ? 2 : 0 )
             }
@@ -343,7 +343,6 @@ struct MoveView: View {
                 Text(isSavePressed ? "  ✅  " : "Save")
                     .font(Font.system(size: 15))
             }
-            .buttonStyle(actionStyle(color: Color.purple))
             .disabled((white_name.isEmpty || black_name.isEmpty || isSavePressed) ? true : false)
             .blur(radius: (white_name.isEmpty || black_name.isEmpty) ? 2 : 0 )
             
@@ -356,8 +355,9 @@ struct MoveView: View {
                     .font(Font.system(size: 15))
                 
             }
-            .buttonStyle(actionStyle(color: Color.purple))
         }
+        .bold()
+        .buttonStyle(actionStyle(color: Color(#colorLiteral(red: 0.3820513785, green: 0.5693590045, blue: 0.785138309, alpha: 1))))
     }
     private var result_fields: some View {
         VStack {
@@ -545,14 +545,13 @@ struct MoveView: View {
             RoundedRectangle(cornerRadius: 20)
                 .stroke(.blue, lineWidth: 3)
         )
-        .zIndex(isResetPressed ? 4 : -1)
+        .zIndex(isResetPressed ? 3 : -1)
     }
     private var draw_view: some View {
         VStack {
             Text("Are you sure you want to draw the game?")
                 .font(Font.system(size: 35))
                 .bold()
-                .foregroundStyle(Color.purple)
                 .multilineTextAlignment(.center)
             
             Spacer()
@@ -576,7 +575,7 @@ struct MoveView: View {
             }
         }
         .padding()
-        .buttonStyle(actionStyle(color: Color.purple))
+        .buttonStyle(actionStyle(color: Color.blue))
         .frame(width: 340, height: 230)
         .background(Color.mint)
         .cornerRadius(20)
@@ -604,7 +603,7 @@ struct MoveView: View {
         }
         .padding()
         .buttonStyle(actionStyle(color: Color.blue))
-        .frame(width: 390, height: 630)
+        .frame(width: 390, height: 650)
         .background(Color.mint)
         .cornerRadius(20)
         .zIndex(isHistoricPressed ? 3 : -1)
@@ -629,6 +628,8 @@ struct MoveView: View {
                     .disabled((game_controller.isGameFinished || isResetPressed) ? true : false)
                     .blur(radius: (game_controller.isGameFinished || isResetPressed) ? 7 : 0 )
                 }
+                .disabled(isDrawOffered ? true : false)
+                .blur(radius: isDrawOffered ? 4 : 0 )
                 .zIndex(1)
                 .padding()
                 
