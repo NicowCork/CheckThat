@@ -9,10 +9,10 @@ import Foundation
 import AVFoundation
 
 class GameController: ObservableObject {
-    init(actual_move: String = "...", game: Game = Game(), isPairComplete: Bool = true) {
+    init(actual_move: String = "...", game: Game = Game(), isWhitePlaying: Bool = true) {
         self.actual_move = actual_move
         self.game = game
-        self.isPairComplete = isPairComplete
+        self.isWhitePlaying = isWhitePlaying
     }
     
     @Published var actual_move: String {
@@ -21,9 +21,11 @@ class GameController: ObservableObject {
         }
     }
     @Published var game: Game
-    @Published var isPairComplete: Bool
+    @Published var isWhitePlaying: Bool
     @Published var isGameFinished: Bool = false
-    @Published var coup_saved: Move = Move(move: "...")
+    @Published var hasWhiteCastle: Bool = false
+    @Published var hasBlackCastle: Bool = false
+    @Published var white_saved_move: Move = Move(move: "...")
     @Published var buttonsController: ButtonsController = ButtonsController()
     @Published var result: String = ""
     
@@ -47,47 +49,54 @@ class GameController: ObservableObject {
             actual_move.removeLast()
         }
     }
-    func save_pair(withMoveSaved: Move, andMove move: Move) {
+    func save_both(withWhiteMove: Move, andBlackMove move: Move) {
         let pairId: Int = game.count_moves + 1
-        game.pair_Moves.append(PairMove(id_: pairId, move_one: coup_saved, move_two: move))
+        game.pair_Moves.append(PairMove(id_: pairId, move_white: white_saved_move, move_black: move))
         
-        if game.pair_Moves.last?.move_one.move.last == "#" {
+        if game.pair_Moves.last?.move_white.move.last == "#" {
             result = "1-0"
-        } else if game.pair_Moves.last?.move_two.move.last == "#" {
+        } else if game.pair_Moves.last?.move_black.move.last == "#" {
             result = "0-1"
         }
         
         if actual_move.last == "#" {
             isGameFinished = true
         } else {
+            if actual_move == "O-O" || actual_move == "O-O-O" {
+                hasBlackCastle = true
+            }
             game.count_moves += 1
             actual_move = "..."
-            isPairComplete = true
+            isWhitePlaying = true
         }
     }
-    func save_move(move: Move) {
+    func save_white(move: Move) {
         if actual_move.last == "#" {
-            coup_saved = move
-            save_pair(withMoveSaved: move, andMove: Move(move: ""))
+            white_saved_move = move
+            save_both(withWhiteMove: move, andBlackMove: Move(move: "")) //end
         } else {
-            coup_saved = move
+            if actual_move == "O-O" || actual_move == "O-O-O" {
+                hasWhiteCastle = true
+            }
+            white_saved_move = move
             actual_move = "..."
-            isPairComplete = false
+            isWhitePlaying = false
         }
     }
     func newGame() {
         actual_move = "..."
         result = ""
         self.game = Game()
-        self.isPairComplete = true
+        self.isWhitePlaying = true
         self.isGameFinished = false
-        self.coup_saved = Move(move: "...")
+        self.white_saved_move = Move(move: "...")
+        self.hasWhiteCastle = false
+        self.hasBlackCastle = false
     }
-    
     func getPGNContent(forWhite white: String, andBlack black : String, result: String, event: String?, site: String?, blackElo: String?, whiteElo: String?, date: Date) -> String {
         var pgn_moves = ""
         for moves in game.pair_Moves {
-            let move = "\(moves.id_).\(moves.move_one.move) \(moves.move_two.move)"
+            let move = "\(moves.id_).\(moves.move_white.move) \(moves.move_black.move)"
             pgn_moves += "\(move) "
         }
         

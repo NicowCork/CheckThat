@@ -28,6 +28,8 @@ struct MoveView: View {
     @State private var isSavePressed: Bool = false
     @State private var isDeletePressed: Bool = false
     @State private var confirmingDeletion: DataGame? = nil
+//    @State private var isFlashing = false
+//    @State private var isFlashingRect = false
     
     @FocusState private var focusedField: Field?
     @FocusState private var isWhiteNameFieldFocused: Bool
@@ -60,34 +62,50 @@ struct MoveView: View {
     
     private var menu_buttons : some View {
         HStack {
-            Button(action: {
-                isResetPressed.toggle()
-            }) {
-                Text("RESET")
+            if verticalSizeClass == .compact {
+                Spacer(minLength: 100)
+                Button(action: {
+                    isResetPressed.toggle()
+                }) {
+                    Text("RESET")
+                }
+                .padding(5)
+                .font(.system(size: 20, weight: .bold))
+                .background(isResetPressed ? Color.blue : Color.gray)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .disabled((isHistoricPressed  || game_controller.isGameFinished) ? true : false)
+                .opacity(game_controller.isGameFinished ? 0 : 1)
+            } else {
+                Button(action: {
+                    isResetPressed.toggle()
+                }) {
+                    Text("RESET")
+                }
+                .padding(5)
+                .font(.system(size: 20, weight: .bold))
+                .background(isResetPressed ? Color.blue : Color.gray)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .disabled((isHistoricPressed  || game_controller.isGameFinished) ? true : false)
+                .opacity(game_controller.isGameFinished ? 0 : 1)
+                
+                Button(action: {
+                    isHistoricPressed.toggle()
+                }) {
+                    Text("HISTORIC")
+                }
+                .padding(5)
+                .font(.system(size: 20, weight: .bold))
+                .background(isHistoricPressed ? Color.blue : Color.gray)
+                .foregroundColor(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .disabled((isResetPressed || verticalSizeClass == .compact) ? true : false)
+                .opacity(verticalSizeClass == .compact ? 0 : 1)
+                .blur(radius: isResetPressed ? 4 : 0)
+                
+                Spacer()
             }
-            .padding(5)
-            .font(.system(size: 20, weight: .bold))
-            .background(isResetPressed ? Color.blue : Color.gray)
-            .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .disabled((isHistoricPressed  || game_controller.isGameFinished) ? true : false)
-            .opacity((isHistoricPressed || game_controller.isGameFinished) ? 0 : 1)
-            
-            Button(action: {
-                isHistoricPressed.toggle()
-            }) {
-                Text("HISTORIC")
-            }
-            .padding(5)
-            .font(.system(size: 20, weight: .bold))
-            .background(isHistoricPressed ? Color.blue : Color.gray)
-            .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .disabled((isResetPressed || verticalSizeClass == .compact) ? true : false)
-            .opacity(verticalSizeClass == .compact ? 0 : 1)
-            .blur(radius: isResetPressed ? 4 : 0)
-            
-            Spacer()
         }
     }
     private var score_view : some View {
@@ -101,7 +119,7 @@ struct MoveView: View {
                 
                 VStack(spacing: 15) {
                     HStack() {
-                        Text(game_controller.isPairComplete ? game_controller.actual_move : game_controller.coup_saved.move)
+                        Text(game_controller.isWhitePlaying ? game_controller.actual_move : game_controller.white_saved_move.move)
                             .font(Font.system(size: 35))
                             .background(Color.mint)
                             .clipShape(RoundedRectangle(cornerRadius: 5))
@@ -113,7 +131,7 @@ struct MoveView: View {
                     .background(Color.mint)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     HStack {
-                        Text(game_controller.isPairComplete ? "..." : game_controller.actual_move)
+                        Text(game_controller.isWhitePlaying ? "..." : game_controller.actual_move)
                             .font(Font.system(size: 35))
                             .background(Color.mint)
                             .clipShape(RoundedRectangle(cornerRadius: 5))
@@ -127,7 +145,7 @@ struct MoveView: View {
                 }
             }
             .blur(radius: (game_controller.isGameFinished || isResetPressed) ? 4 : 0 )
-            .opacity(isHistoricPressed ? 0 : 1)
+            .opacity((isHistoricPressed && verticalSizeClass  == .regular) ? 0 : 1)
             
             Spacer()
         }
@@ -144,7 +162,7 @@ struct MoveView: View {
                     .bold()
             }
             .buttonStyle(actionStyle(color: Color.blue))
-            .blur(radius: game_controller.game.count_moves <= 2 ? 4 : 0)
+            .blur(radius: game_controller.game.count_moves <= 2 ? 2 : 0)
             .disabled(game_controller.game.count_moves <= 2 ? true : false)
             
             Spacer()
@@ -161,10 +179,11 @@ struct MoveView: View {
                         .bold())
             }
             .buttonStyle(actionStyle(color: Color.mint))
-            .blur(radius: (game_controller.isGameFinished || isResetPressed || game_controller.actual_move == "...") ? 4 : 0 )
+            .blur(radius: (game_controller.isGameFinished || isResetPressed || game_controller.actual_move == "...") ? 2 : 0 )
             .disabled((game_controller.isGameFinished || game_controller.actual_move == "...") ? true : false)
         }
     }
+    
     private var main_buttons: some View {
         VStack {
             HStack(spacing: 1) {
@@ -221,92 +240,147 @@ struct MoveView: View {
         }
     }
     private var actions: some View {
-        HStack {
-            VStack {
-                HStack {
-                    ForEach(moves.check, id: \.self) { thatchar in
+        VStack {
+            HStack {
+                VStack {
+                    ForEach(moves.small_rock, id: \.self) { thatchar in
                         Button(action: {
-                            game_controller.add_character("+")
+                            game_controller.add_character(thatchar)
                         }) {
-                            Text("+")
+                            Text(thatchar)
                                 .cornerRadius(8)
                         }
-                        .buttonStyle(actionStyle(color: (game_controller.buttonsController.checkAllowed && game_controller.game.count_moves >= 1) ? Color.blue : Color.gray))
-                        .disabled((game_controller.buttonsController.checkAllowed && game_controller.game.count_moves >= 1) ? false : true)
+                        .buttonStyle(actionStyle(color: (game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
+                        .disabled((game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? false : true)
                     }
-                    ForEach(moves.mate, id: \.self) { thatchar in
+                    ForEach(moves.footprint_small_rock, id: \.self) { footprint in
+                        Text(footprint)
+                            .font(.footnote)
+                    }
+                    
+                }
+                .opacity((game_controller.hasWhiteCastle && game_controller.isWhitePlaying) || (game_controller.hasBlackCastle && !game_controller.isWhitePlaying) ? 0 : 1)
+                VStack {
+                    ForEach(moves.big_rock, id: \.self) { thatchar in
                         Button(action: {
-                            game_controller.add_character("#")
+                            game_controller.add_character(thatchar)
                         }) {
-                            Text("#")
+                            Text(thatchar)
                                 .cornerRadius(8)
                         }
-                        .buttonStyle(actionStyle(color: (game_controller.buttonsController.mateAllowed && game_controller.game.count_moves >= 1) ? Color.blue : Color.gray))
-                        .disabled((game_controller.buttonsController.mateAllowed && game_controller.game.count_moves >= 1) ? false : true)
+                        .buttonStyle(actionStyle(color: (game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
+                        .disabled((game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? false : true)
+                    }
+                    ForEach(moves.footprint_big_rock, id: \.self) { footprint in
+                        Text(footprint)
+                            .font(.footnote)
                     }
                 }
-                ForEach(moves.promo, id: \.self) { thatchar in
+                .opacity((game_controller.hasWhiteCastle && game_controller.isWhitePlaying) || (game_controller.hasBlackCastle && !game_controller.isWhitePlaying) ? 0 : 1)
+                Spacer(minLength: 30)
+                VStack {
+                    ForEach(moves.promo, id: \.self) { thatchar in
+                        Button(action: {
+                            game_controller.add_character(thatchar)
+                        }) {
+                            Text(thatchar)
+                                .cornerRadius(8)
+                                .font(Font.system(size: verticalSizeClass == .regular ? 23 : 20))
+                                .bold()
+                        }
+                        .buttonStyle(actionStyle(color: (game_controller.buttonsController.promoAllowed && game_controller.game.count_moves >= 4) ? Color.blue : Color.gray))
+                        .disabled((game_controller.buttonsController.promoAllowed && game_controller.game.count_moves >= 4) ? false : true)
+                    }
+                    ForEach(moves.footprint_promo, id: \.self) { footprint in
+                        Text(footprint)
+                            .font(.footnote)
+                    }
+                }
+            }
+            Divider()
+            HStack {
+                ForEach(moves.mate, id: \.self) { thatchar in
                     Button(action: {
-                        game_controller.add_character("=")
+                        game_controller.add_character("#")
                     }) {
                         Text(thatchar)
                             .cornerRadius(8)
-                            .font(Font.system(size: verticalSizeClass == .regular ? 23 : 20))
-                            .bold()
                     }
-                    .buttonStyle(actionStyle(color: (game_controller.buttonsController.promoAllowed && game_controller.game.count_moves >= 4) ? Color.blue : Color.gray))
-                    .disabled((game_controller.buttonsController.promoAllowed && game_controller.game.count_moves >= 4) ? false : true)
+                    .buttonStyle(takeStyle(color: (game_controller.buttonsController.mateAllowed && game_controller.game.count_moves >= 1) ? Color.blue : Color.gray))
+                    .disabled((game_controller.buttonsController.mateAllowed && game_controller.game.count_moves >= 1) ? false : true)
                 }
-            }
-            VStack {
-                ForEach(moves.rocks, id: \.self) { thatchar in
+                ForEach(moves.check, id: \.self) { thatchar in
                     Button(action: {
-                        game_controller.add_character(thatchar)
+                        game_controller.add_character("+")
                     }) {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(actionStyle(color: (game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
-                    .disabled((game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? false : true)
+                    .buttonStyle(takeStyle(color: (game_controller.buttonsController.checkAllowed && game_controller.game.count_moves >= 1) ? Color.blue : Color.gray))
+                    .disabled((game_controller.buttonsController.checkAllowed && game_controller.game.count_moves >= 1) ? false : true)
+                }
+                ForEach(moves.take, id: \.self) { thatchar in
+                    Button(action: {
+                        game_controller.add_character("x")
+                    }) {
+                        Text(thatchar)
+                            .cornerRadius(8)
+                    }
+                    .buttonStyle(takeStyle(color: game_controller.buttonsController.takeAllowed  ? Color.blue : Color.gray))
+                    .disabled(game_controller.buttonsController.takeAllowed ? false : true)
+                    
                 }
             }
-            ForEach(moves.take, id: \.self) { thatchar in
-                Button(action: {
-                    game_controller.add_character("x")
-                }) {
-                    Text(thatchar)
-                        .cornerRadius(8)
-                }
-                .buttonStyle(takeStyle(color: game_controller.buttonsController.takeAllowed  ? Color.blue : Color.gray))
-                .disabled(game_controller.buttonsController.takeAllowed ? false : true)
-                
-            }
+            .blur(radius: game_controller.isGameFinished ? 4 : 0 )
+            .disabled((game_controller.isGameFinished || isHistoricPressed) ? true : false)
         }
-        .blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Actions
-        .disabled((game_controller.isGameFinished || isHistoricPressed) ? true : false)
     }
+    
     private var valid: some View {
         Button(action: {
-            game_controller.isPairComplete ? game_controller.save_move(move: Move(move: game_controller.actual_move)) : game_controller.save_pair(withMoveSaved: game_controller.coup_saved, andMove: Move(move: game_controller.actual_move))
+            game_controller.isWhitePlaying ? game_controller.save_white(move: Move(move: game_controller.actual_move)) : game_controller.save_both(withWhiteMove: game_controller.white_saved_move, andBlackMove: Move(move: game_controller.actual_move))
         }) {
-            Text(game_controller.isPairComplete ? "Valider le coup" : "Valider la paire")
-                .fontWeight(.bold)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .frame(height: 120)
-                .background(game_controller.isPairComplete ? Color.blue : Color.green)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+            if (game_controller.isWhitePlaying && game_controller.actual_move.last == "#") {
+                Text("tap to valid \n White Won ?")
+                    .font(Font.system(size: 30))
+                    .fontWeight(.bold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 120)
+                    .background(game_controller.isWhitePlaying ? Color.white : Color.black)
+                    .foregroundColor(.blue)
+                    .cornerRadius(10)
+            } else if (!game_controller.isWhitePlaying && game_controller.actual_move.last == "#") {
+                Text("tap to valid \n Black Won ?")
+                    .font(Font.system(size: 30))
+                    .fontWeight(.bold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 120)
+                    .background(game_controller.isWhitePlaying ? Color.white : Color.black)
+                    .foregroundColor(.blue)
+                    .cornerRadius(10)
+            } else {
+                Text("tap to valid")
+                    .font(Font.system(size: 30))
+                    .fontWeight(.bold)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 120)
+                    .background(game_controller.isWhitePlaying ? Color.white : Color.black)
+                    .foregroundColor(.blue)
+                    .cornerRadius(10)
+            }
         }
-        .blur(radius: (game_controller.isGameFinished || isResetPressed || !game_controller.buttonsController.moveAllowed) ? 4 : 0 )
-        .opacity(isHistoricPressed ? 0 : 1)
+        .blur(radius: (game_controller.isGameFinished || isResetPressed || !game_controller.buttonsController.moveAllowed) ? 2 : 0 )
+        .opacity(( isHistoricPressed && verticalSizeClass  == .regular) ? 0 : 1)
         .disabled(game_controller.buttonsController.moveAllowed ? false : true)
         .padding(.top)
     }
     private var last_move: some View {
         HStack {
             if game_controller.game.count_moves != 0 {
-                Text("\(game_controller.game.pair_Moves.last?.id_ ?? 0). \(game_controller.game.pair_Moves.last?.move_one.move ?? "...") : \(game_controller.game.pair_Moves.last?.move_two.move ?? "...")")
+                Text("\(game_controller.game.pair_Moves.last?.id_ ?? 0). \(game_controller.game.pair_Moves.last?.move_white.move ?? "...") : \(game_controller.game.pair_Moves.last?.move_black.move ?? "...")")
                     .font(Font.system(size: 26))
                     .background(Color.blue)
                     .foregroundColor(Color.white)
@@ -463,7 +537,7 @@ struct MoveView: View {
         List {
             ForEach(game_controller.game.pair_Moves) { pair_move in
                 HStack {
-                    Text("\(pair_move.id_). \(pair_move.move_one.move) : \(pair_move.move_two.move)")
+                    Text("\(pair_move.id_). \(pair_move.move_white.move) : \(pair_move.move_black.move)")
                         .scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip list items here
                 }
             }
@@ -612,21 +686,33 @@ struct MoveView: View {
     var body: some View {
         if verticalSizeClass == .regular { // portrait
             ZStack {
-                VStack(spacing: 17) {
+                VStack(spacing: 0) {
                     menu_buttons
-                    Group {
+                    Spacer(minLength: 20)
+                    VStack {
                         score_view
                         Spacer(minLength: 20)
-                        top_buttons
-                        Divider()
-                        main_buttons
-                        Divider()
-                        actions
-                        Spacer(minLength: 20)
+                        VStack(spacing: 17) {
+                            top_buttons
+                            Divider()
+                            main_buttons
+                            actions
+                        }
                         valid
                     }
                     .disabled((game_controller.isGameFinished || isResetPressed) ? true : false)
                     .blur(radius: (game_controller.isGameFinished || isResetPressed) ? 7 : 0 )
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 20)
+//                            .stroke(game_controller.isPairComplete ? .white : .black, lineWidth: 5)
+//                            .opacity(isFlashingRect ? 0.2 : 1.0)
+//                            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isFlashingRect)
+//                            .onAppear {
+//                                withAnimation {
+//                                    isFlashingRect.toggle()
+//                                }
+//                            }
+//                    )
                 }
                 .disabled(isDrawOffered ? true : false)
                 .blur(radius: isDrawOffered ? 4 : 0 )
@@ -685,7 +771,7 @@ struct MoveView: View {
                 .zIndex(game_controller.isGameFinished ? 2 : 0)
                 .opacity(game_controller.isGameFinished ? 2 : 0)
                 .offset(y: isWhiteNameFieldFocused ? 40 : 0)
-                                
+                
                 if isResetPressed { reset_view }
                 
                 if isDrawOffered { draw_view }
@@ -695,7 +781,7 @@ struct MoveView: View {
         } else if verticalSizeClass == .compact { // landscape
             ZStack {
                 HStack {
-                    VStack(spacing: 17) {
+                    VStack(spacing: 7) {
                         main_buttons
                         Divider()
                         actions

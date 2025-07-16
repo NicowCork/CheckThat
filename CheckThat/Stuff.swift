@@ -36,7 +36,7 @@ struct takeStyle: ButtonStyle {
     let color: Color
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .frame(width: 73, height: 73)
+            .frame(width: 90, height: 83)
             .font(.system(size: 23, weight: .bold))
             .padding(EdgeInsets(top: 5, leading: 15, bottom: 5, trailing: 15))
             .foregroundStyle(.white)

@@ -17,8 +17,8 @@ struct Game: Identifiable {
 struct PairMove: Identifiable {
     let id = UUID()
     var id_: Int = 0
-    let move_one: Move
-    let move_two: Move
+    let move_white: Move
+    let move_black: Move
 }
 
 struct Move: Identifiable {
@@ -31,9 +31,13 @@ struct MovesData {
     let numbers = ["1", "2", "3", "4", "5", "6", "7", "8"]
     let pieces_letters = ["R", "N", "B", "Q", "K"]
     let footprints_pieces = ["ROOK", "KNIGHT", "BISHOP", "QUEEN", "KING"]
+    let footprint_small_rock = ["SHORT CASTLE"]
+    let footprint_big_rock = ["LONG CASTLE"]
+    let footprint_promo = ["PROMOTION"]
     let take = ["TAKE"]
-    let rocks = ["O-O-O", "O-O"]
+    let small_rock = ["O-O"]
+    let big_rock = ["O-O-O"]
     let check = ["CHECK"]
     let mate = ["MATE"]
-    let promo = ["PROMO"]
+    let promo = ["="]
 }
