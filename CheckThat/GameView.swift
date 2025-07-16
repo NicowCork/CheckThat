@@ -225,8 +225,18 @@ struct MoveView: View {
                     .buttonStyle(thatStyle(color: game_controller.buttonsController.piecesAllowed ? Color.blue : Color.gray))
                     .disabled(game_controller.buttonsController.piecesAllowed ? false : true)
                 }
+                ForEach(moves.king, id: \.self) { thatchar in
+                    Button(action: {
+                        game_controller.add_character(thatchar)
+                    }) {
+                        Text(thatchar)
+                            .cornerRadius(8)
+                    }
+                    .buttonStyle(thatStyle(color: game_controller.buttonsController.kingAllowed ? Color.blue : Color.gray))
+                    .disabled(game_controller.buttonsController.kingAllowed ? false : true)
+                }
             }
-            .blur(radius: game_controller.isGameFinished ? 4 : 0 ) // MARK: Pieces
+            .blur(radius: game_controller.isGameFinished ? 4 : 0 )
             HStack(spacing: 10) {
                 ForEach(moves.footprints_pieces, id: \.self) { footprint in
                     Text(footprint)

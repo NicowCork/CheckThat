@@ -13,6 +13,7 @@ struct ButtonsController {
     var rankAllowed: Bool = false
     var fileAllowed: Bool = true
     var piecesAllowed: Bool = true
+    var kingAllowed: Bool = false
     var moveAllowed: Bool = false
     var rockAllowed: Bool = false
     var mateAllowed: Bool = false
@@ -25,6 +26,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = true
             piecesAllowed = true
+            kingAllowed = true
             moveAllowed = false
             rockAllowed = true
             mateAllowed = false
@@ -34,6 +36,7 @@ struct ButtonsController {
             checkAllowed = false
             rankAllowed = false
             fileAllowed = false
+            kingAllowed = false
             piecesAllowed = false
             moveAllowed = true
             rockAllowed = false
@@ -45,6 +48,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = false
@@ -55,6 +59,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = true
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -65,6 +70,7 @@ struct ButtonsController {
             rankAllowed = true
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -75,6 +81,7 @@ struct ButtonsController {
             rankAllowed = true
             fileAllowed = true
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -85,6 +92,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = true
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -95,6 +103,7 @@ struct ButtonsController {
             rankAllowed = true
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -105,6 +114,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -115,6 +125,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = true
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -125,6 +136,7 @@ struct ButtonsController {
             rankAllowed = true
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -135,6 +147,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -145,6 +158,7 @@ struct ButtonsController {
             rankAllowed = true
             fileAllowed = true
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -155,6 +169,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = true
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -165,6 +180,7 @@ struct ButtonsController {
             rankAllowed = true
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -175,6 +191,7 @@ struct ButtonsController {
             rankAllowed = true
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -185,6 +202,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -195,6 +213,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = true
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -205,6 +224,7 @@ struct ButtonsController {
             rankAllowed = true
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -215,6 +235,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -225,6 +246,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -235,6 +257,7 @@ struct ButtonsController {
             rankAllowed = true
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -245,6 +268,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -255,6 +279,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -265,6 +290,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -275,6 +301,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -285,6 +312,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = true
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -295,6 +323,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true
@@ -305,6 +334,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = true
+            kingAllowed = false
             moveAllowed = false
             rockAllowed = false
             mateAllowed = false
@@ -315,6 +345,7 @@ struct ButtonsController {
             rankAllowed = false
             fileAllowed = false
             piecesAllowed = false
+            kingAllowed = false
             moveAllowed = true
             rockAllowed = false
             mateAllowed = true

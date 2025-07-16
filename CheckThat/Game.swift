@@ -29,7 +29,8 @@ struct Move: Identifiable {
 struct MovesData {
     let letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
     let numbers = ["1", "2", "3", "4", "5", "6", "7", "8"]
-    let pieces_letters = ["R", "N", "B", "Q", "K"]
+    let pieces_letters = ["R", "N", "B", "Q"]
+    let king = ["K"]
     let footprints_pieces = ["ROOK", "KNIGHT", "BISHOP", "QUEEN", "KING"]
     let footprint_small_rock = ["SHORT CASTLE"]
     let footprint_big_rock = ["LONG CASTLE"]
