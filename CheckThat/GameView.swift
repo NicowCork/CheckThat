@@ -28,8 +28,6 @@ struct MoveView: View {
     @State private var isSavePressed: Bool = false
     @State private var isDeletePressed: Bool = false
     @State private var confirmingDeletion: DataGame? = nil
-//    @State private var isFlashing = false
-//    @State private var isFlashingRect = false
     
     @FocusState private var focusedField: Field?
     @FocusState private var isWhiteNameFieldFocused: Bool
@@ -702,17 +700,6 @@ struct MoveView: View {
                     }
                     .disabled((game_controller.isGameFinished || isResetPressed) ? true : false)
                     .blur(radius: (game_controller.isGameFinished || isResetPressed) ? 7 : 0 )
-//                    .overlay(
-//                        RoundedRectangle(cornerRadius: 20)
-//                            .stroke(game_controller.isPairComplete ? .white : .black, lineWidth: 5)
-//                            .opacity(isFlashingRect ? 0.2 : 1.0)
-//                            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isFlashingRect)
-//                            .onAppear {
-//                                withAnimation {
-//                                    isFlashingRect.toggle()
-//                                }
-//                            }
-//                    )
                 }
                 .disabled(isDrawOffered ? true : false)
                 .blur(radius: isDrawOffered ? 4 : 0 )
