@@ -11,19 +11,13 @@ struct Game: Identifiable {
     let id = UUID()
     var count_moves : Int = 0
     let game_date = Date()
-    var pair_Moves: [PairMove] = []
+    var moves: [Moves] = []
 }
 
-struct PairMove: Identifiable {
+struct Moves: Identifiable {
     let id = UUID()
-    var id_: Int = 0
-    let move_white: Move
-    let move_black: Move
-}
-
-struct Move: Identifiable {
-    let id = UUID()
-    let move: String
+    var move_white = ""
+    var move_black = ""
 }
 
 struct MovesData {

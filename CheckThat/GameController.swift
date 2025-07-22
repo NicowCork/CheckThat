@@ -9,10 +9,9 @@ import Foundation
 import AVFoundation
 
 class GameController: ObservableObject {
-    init(actual_move: String = "...", game: Game = Game(), isWhitePlaying: Bool = true) {
+    init(actual_move: String = "...", game: Game = Game()) {
         self.actual_move = actual_move
         self.game = game
-        self.isWhitePlaying = isWhitePlaying
     }
     
     @Published var actual_move: String {
@@ -21,82 +20,57 @@ class GameController: ObservableObject {
         }
     }
     @Published var game: Game
-    @Published var isWhitePlaying: Bool
+    
+    @Published var isWhitePlaying: Bool = true
     @Published var isGameFinished: Bool = false
     @Published var hasWhiteCastle: Bool = false
     @Published var hasBlackCastle: Bool = false
-    @Published var white_saved_move: Move = Move(move: "...")
+    
+    @Published var white_saved_move = "..."
     @Published var buttonsController: ButtonsController = ButtonsController()
     @Published var result: String = ""
     
     var gameToBeSaved: String = ""
+    var default_ui = "..."
     
-    func add_character(_ character: String) {
-        if actual_move.last == "=" && character == "K" {
-            playSound(sound: "Pouet", type: ".mp3")
-        } else if actual_move == "..." {
-            actual_move = character
-        } else {
-            actual_move.append(character)
-        }
+    func add(_ character: String) { actual_move == default_ui ? actual_move = character : actual_move.append(character) }
+    
+    func remove() {
+        if actual_move.last == "#" || actual_move.last == "O" { actual_move = default_ui } else { actual_move.removeLast() }
     }
-    func remove_last() {
-        if actual_move == "..." {
-            playSound(sound: "Pouet", type: "mp3")
-        } else if actual_move.count == 1 {
-            actual_move = "..."
-        } else {
-            actual_move.removeLast()
-        }
+    func checkForCastle() {
+        if isWhitePlaying && (actual_move == "O-O" || actual_move == "O-O-O") { hasWhiteCastle = true }
+        if !isWhitePlaying && (actual_move == "O-O" || actual_move == "O-O-O") { hasBlackCastle = true }
     }
-    func save_both(withWhiteMove: Move, andBlackMove move: Move) {
-        let pairId: Int = game.count_moves + 1
-        game.pair_Moves.append(PairMove(id_: pairId, move_white: white_saved_move, move_black: move))
-        
-        if game.pair_Moves.last?.move_white.move.last == "#" {
-            result = "1-0"
-        } else if game.pair_Moves.last?.move_black.move.last == "#" {
-            result = "0-1"
-        }
-        
-        if actual_move.last == "#" {
-            isGameFinished = true
-        } else {
-            if actual_move == "O-O" || actual_move == "O-O-O" {
-                hasBlackCastle = true
-            }
-            game.count_moves += 1
-            actual_move = "..."
-            isWhitePlaying = true
-        }
+    func checkForMate() {
+        if isWhitePlaying && (actual_move.last == "#") { result = "1-0" }
+        if !isWhitePlaying && (actual_move.last == "#") { result = "0-1" }
+        if actual_move.last == "#" { isGameFinished = true }
+    }   
+    
+    func save() {
+        isWhitePlaying ? white_saved_move = actual_move : game.moves.append(Moves(move_white: white_saved_move, move_black: actual_move))
+        checkForCastle()
+        checkForMate()
+        actual_move = default_ui
+        isWhitePlaying.toggle()
+        if !isWhitePlaying { game.count_moves += 1 }
     }
-    func save_white(move: Move) {
-        if actual_move.last == "#" {
-            white_saved_move = move
-            save_both(withWhiteMove: move, andBlackMove: Move(move: "")) //end
-        } else {
-            if actual_move == "O-O" || actual_move == "O-O-O" {
-                hasWhiteCastle = true
-            }
-            white_saved_move = move
-            actual_move = "..."
-            isWhitePlaying = false
-        }
-    }
+
     func newGame() {
-        actual_move = "..."
+        actual_move = default_ui
         result = ""
         self.game = Game()
         self.isWhitePlaying = true
         self.isGameFinished = false
-        self.white_saved_move = Move(move: "...")
+        self.white_saved_move = "..."
         self.hasWhiteCastle = false
         self.hasBlackCastle = false
     }
     func getPGNContent(forWhite white: String, andBlack black : String, result: String, event: String?, site: String?, blackElo: String?, whiteElo: String?, date: Date) -> String {
         var pgn_moves = ""
-        for moves in game.pair_Moves {
-            let move = "\(moves.id_).\(moves.move_white.move) \(moves.move_black.move)"
+        for moves in game.moves {
+            let move = "\(game.count_moves).\(moves.move_white) \(moves.move_black)"
             pgn_moves += "\(move) "
         }
         

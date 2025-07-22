@@ -13,7 +13,7 @@ struct ButtonsController {
     var rankAllowed: Bool = false
     var fileAllowed: Bool = true
     var piecesAllowed: Bool = true
-    var kingAllowed: Bool = false
+    var kingAllowed: Bool = true
     var moveAllowed: Bool = false
     var rockAllowed: Bool = false
     var mateAllowed: Bool = false
