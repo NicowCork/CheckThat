@@ -16,6 +16,7 @@ struct Game: Identifiable {
 
 struct Moves: Identifiable {
     let id = UUID()
+    var number = 0
     var move_white = ""
     var move_black = ""
 }

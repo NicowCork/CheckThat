@@ -54,7 +54,7 @@ struct MoveView: View {
                             event: event,
                             site: site,
                             date: game_controller.game.game_date,
-                            game: game_controller.gameToBeSaved)
+                            game: game_controller.getPGNContent(forWhite: white_name, andBlack: black_name, result: game_controller.result, event: event, site: site, blackElo: black_elo, whiteElo: white_elo, date: game_controller.game.game_date))
         context.insert(game)
     }
     
@@ -519,7 +519,7 @@ struct MoveView: View {
         List {
             ForEach(game_controller.game.moves) { moves in
                 HStack {
-                    Text("\(game_controller.game.count_moves). \(moves.move_white) : \(moves.move_black)")
+                    Text("\(moves.number). \(moves.move_white) : \(moves.move_black)")
                         .scaleEffect(x: 1, y: -1, anchor: .center) // 👈 Flip list items here
                 }
             }

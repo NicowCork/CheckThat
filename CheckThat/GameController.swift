@@ -14,30 +14,29 @@ class GameController: ObservableObject {
         self.game = game
     }
     
-    @Published var actual_move: String {
-        willSet {
-            buttonsController.ControlButtons(forInput: newValue)
-        }
-    }
     @Published var game: Game
+    @Published var buttonsController: ButtonsController = ButtonsController()
     
     @Published var isWhitePlaying: Bool = true
     @Published var isGameFinished: Bool = false
     @Published var hasWhiteCastle: Bool = false
     @Published var hasBlackCastle: Bool = false
     
+    @Published var actual_move: String {
+        willSet {
+            buttonsController.ControlButtons(forInput: newValue)
+        }
+    }
     @Published var white_saved_move = "..."
-    @Published var buttonsController: ButtonsController = ButtonsController()
     @Published var result: String = ""
     
-    var gameToBeSaved: String = ""
     var default_ui = "..."
     
     func add(_ character: String) { actual_move == default_ui ? actual_move = character : actual_move.append(character) }
-    
     func remove() {
-        if actual_move.last == "#" || actual_move.last == "O" { actual_move = default_ui } else { actual_move.removeLast() }
+        if actual_move.count == 1 || actual_move.matches("O$") { actual_move = default_ui } else { actual_move.removeLast() }
     }
+    
     func checkForCastle() {
         if isWhitePlaying && (actual_move == "O-O" || actual_move == "O-O-O") { hasWhiteCastle = true }
         if !isWhitePlaying && (actual_move == "O-O" || actual_move == "O-O-O") { hasBlackCastle = true }
@@ -49,14 +48,13 @@ class GameController: ObservableObject {
     }   
     
     func save() {
-        isWhitePlaying ? white_saved_move = actual_move : game.moves.append(Moves(move_white: white_saved_move, move_black: actual_move))
+        if !isWhitePlaying { game.count_moves += 1 }
+        isWhitePlaying ? white_saved_move = actual_move : game.moves.append(Moves(number: game.count_moves, move_white: white_saved_move, move_black: actual_move))
         checkForCastle()
         checkForMate()
         actual_move = default_ui
         isWhitePlaying.toggle()
-        if !isWhitePlaying { game.count_moves += 1 }
     }
-
     func newGame() {
         actual_move = default_ui
         result = ""
@@ -67,10 +65,11 @@ class GameController: ObservableObject {
         self.hasWhiteCastle = false
         self.hasBlackCastle = false
     }
+
     func getPGNContent(forWhite white: String, andBlack black : String, result: String, event: String?, site: String?, blackElo: String?, whiteElo: String?, date: Date) -> String {
         var pgn_moves = ""
         for moves in game.moves {
-            let move = "\(game.count_moves).\(moves.move_white) \(moves.move_black)"
+            let move = "\(moves.number).\(moves.move_white) \(moves.move_black)"
             pgn_moves += "\(move) "
         }
         
@@ -86,7 +85,6 @@ class GameController: ObservableObject {
             
             \(pgn_moves)\(self.result)
             """
-        gameToBeSaved = pgnString
         return pgnString
     }
 }
