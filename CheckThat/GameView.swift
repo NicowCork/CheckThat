@@ -109,7 +109,7 @@ struct MoveView: View {
     private var score_view : some View {
         HStack {
             HStack  {
-                Text("\(game_controller.game.count_moves == 0 ? "1" : "\(game_controller.game.count_moves + 1)").")
+                Text("\(game_controller.game.count_moves)")
                     .font(Font.system(size: 55))
                     .background(Color.mint)
                     .clipShape(RoundedRectangle(cornerRadius: 5))
@@ -129,7 +129,7 @@ struct MoveView: View {
                     .background(Color.mint)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
                     HStack {
-                        Text(game_controller.isWhitePlaying ? game_controller.default_ui : game_controller.actual_move)
+                        Text(game_controller.isWhitePlaying ? "..." : game_controller.actual_move)
                             .font(Font.system(size: 35))
                             .background(Color.mint)
                             .clipShape(RoundedRectangle(cornerRadius: 5))
@@ -173,8 +173,8 @@ struct MoveView: View {
                         .bold())
             }
             .buttonStyle(actionStyle(color: Color.mint))
-            .blur(radius: (game_controller.isGameFinished || isResetPressed || game_controller.actual_move == game_controller.default_ui) ? 2 : 0 )
-            .disabled((game_controller.isGameFinished || game_controller.actual_move == game_controller.default_ui) ? true : false)
+            .blur(radius: (game_controller.isGameFinished || isResetPressed || game_controller.actual_move == "...") ? 2 : 0 )
+            .disabled((game_controller.isGameFinished || game_controller.actual_move == "...") ? true : false)
         }
     }
     
@@ -252,8 +252,8 @@ struct MoveView: View {
                             Text(thatchar)
                                 .cornerRadius(8)
                         }
-                        .buttonStyle(actionStyle(color: (game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
-                        .disabled((game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? false : true)
+                        .buttonStyle(actionStyle(color: (game_controller.game.count_moves > 3 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
+                        .disabled((game_controller.game.count_moves > 3 && game_controller.buttonsController.rockAllowed) ? false : true)
                     }
                     ForEach(moves.footprint_small_rock, id: \.self) { footprint in
                         Text(footprint)
@@ -270,8 +270,8 @@ struct MoveView: View {
                             Text(thatchar)
                                 .cornerRadius(8)
                         }
-                        .buttonStyle(actionStyle(color: (game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
-                        .disabled((game_controller.game.count_moves > 2 && game_controller.buttonsController.rockAllowed) ? false : true)
+                        .buttonStyle(actionStyle(color: (game_controller.game.count_moves > 3 && game_controller.buttonsController.rockAllowed) ? Color.blue : Color.gray))
+                        .disabled((game_controller.game.count_moves > 3 && game_controller.buttonsController.rockAllowed) ? false : true)
                     }
                     ForEach(moves.footprint_big_rock, id: \.self) { footprint in
                         Text(footprint)
@@ -290,8 +290,8 @@ struct MoveView: View {
                                 .font(Font.system(size: verticalSizeClass == .regular ? 23 : 20))
                                 .bold()
                         }
-                        .buttonStyle(actionStyle(color: (game_controller.buttonsController.promoAllowed && game_controller.game.count_moves >= 4) ? Color.blue : Color.gray))
-                        .disabled((game_controller.buttonsController.promoAllowed && game_controller.game.count_moves >= 4) ? false : true)
+                        .buttonStyle(actionStyle(color: (game_controller.buttonsController.promoAllowed && game_controller.game.count_moves > 7) ? Color.blue : Color.gray))
+                        .disabled((game_controller.buttonsController.promoAllowed && game_controller.game.count_moves >= 7) ? false : true)
                     }
                     ForEach(moves.footprint_promo, id: \.self) { footprint in
                         Text(footprint)
@@ -308,8 +308,8 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(takeStyle(color: (game_controller.buttonsController.mateAllowed && game_controller.game.count_moves >= 1) ? Color.blue : Color.gray))
-                    .disabled((game_controller.buttonsController.mateAllowed && game_controller.game.count_moves >= 1) ? false : true)
+                    .buttonStyle(takeStyle(color: (game_controller.buttonsController.mateAllowed && game_controller.game.count_moves > 1) ? Color.blue : Color.gray))
+                    .disabled((game_controller.buttonsController.mateAllowed && game_controller.game.count_moves > 1) ? false : true)
                 }
                 ForEach(moves.check, id: \.self) { thatchar in
                     Button(action: {
@@ -318,8 +318,8 @@ struct MoveView: View {
                         Text(thatchar)
                             .cornerRadius(8)
                     }
-                    .buttonStyle(takeStyle(color: (game_controller.buttonsController.checkAllowed && game_controller.game.count_moves >= 1) ? Color.blue : Color.gray))
-                    .disabled((game_controller.buttonsController.checkAllowed && game_controller.game.count_moves >= 1) ? false : true)
+                    .buttonStyle(takeStyle(color: (game_controller.buttonsController.checkAllowed && game_controller.game.count_moves > 1) ? Color.blue : Color.gray))
+                    .disabled((game_controller.buttonsController.checkAllowed && game_controller.game.count_moves > 1) ? false : true)
                 }
                 ForEach(moves.take, id: \.self) { thatchar in
                     Button(action: {

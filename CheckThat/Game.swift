@@ -9,7 +9,7 @@ import Foundation
 
 struct Game: Identifiable {
     let id = UUID()
-    var count_moves : Int = 0
+    var count_moves : Int = 1
     let game_date = Date()
     var moves: [Moves] = []
 }
